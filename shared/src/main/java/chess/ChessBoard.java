@@ -7,9 +7,11 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
+    char[][] board;
     public ChessBoard() {
-        
+        final int columns = 8;
+        final int rows = 8;
+        this.board = new char[rows][columns];
     }
 
     /**
