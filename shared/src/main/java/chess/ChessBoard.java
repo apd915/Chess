@@ -10,9 +10,10 @@ import java.util.Arrays;
  */
 public class ChessBoard {
     ChessPiece[][] board;
+    final int rows = 8;
+    final int columns = 8;
+
     public ChessBoard() {
-        final int rows = 8;
-        final int columns = 8;
         this.board = new ChessPiece[rows][columns];
     }
 
@@ -23,7 +24,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()][position.getColumn()] = piece;
+        board[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
     /**
@@ -34,7 +35,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()][position.getColumn()];
+        return board[position.getRow()-1][position.getColumn()-1];
     }
 
     /**
@@ -43,11 +44,11 @@ public class ChessBoard {
      */
     public void resetBoard() {
         ChessPiece.PieceType[] type = {ChessPiece.PieceType.ROOK, ChessPiece.PieceType.KNIGHT,
-                ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KING,
-                ChessPiece.PieceType.QUEEN, ChessPiece.PieceType.BISHOP,
+                ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.QUEEN,
+                ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP,
                 ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
 
-        for (int col=0; col<=7; col++) {
+        for (int col=0; col<8; col++) {
             addPiece(new ChessPosition(0, col), new ChessPiece(ChessGame.TeamColor.BLACK, type[col]));
             addPiece(new ChessPosition(1, col), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
             addPiece(new ChessPosition(6, col), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
@@ -74,9 +75,5 @@ public class ChessBoard {
                 "board=" + Arrays.toString(board) +
                 '}';
     }
-
-//    public void printBoard() {
-//        System.out.println(toString());
-//    }
 
 }
