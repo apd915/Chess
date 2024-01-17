@@ -48,11 +48,11 @@ public class ChessBoard {
                 ChessPiece.PieceType.KING, ChessPiece.PieceType.BISHOP,
                 ChessPiece.PieceType.KNIGHT, ChessPiece.PieceType.ROOK};
 
-        for (int col=0; col<8; col++) {
-            addPiece(new ChessPosition(0, col), new ChessPiece(ChessGame.TeamColor.BLACK, type[col]));
-            addPiece(new ChessPosition(1, col), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            addPiece(new ChessPosition(6, col), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            addPiece(new ChessPosition(7, col), new ChessPiece(ChessGame.TeamColor.WHITE, type[col]));
+        for (int col=1; col<9; col++) {
+            addPiece(new ChessPosition(1, col), new ChessPiece(ChessGame.TeamColor.WHITE, type[col-1]));
+            addPiece(new ChessPosition(2, col), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+            addPiece(new ChessPosition(7, col), new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+            addPiece(new ChessPosition(8, col), new ChessPiece(ChessGame.TeamColor.BLACK, type[col-1]));
         }
     }
 
@@ -61,7 +61,7 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Arrays.equals(board, that.board);
+        return Arrays.deepEquals(board, that.board);
     }
 
     @Override
