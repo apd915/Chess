@@ -47,29 +47,6 @@ public class ChessPiece {
         return pieceType;
     }
 
-    public HashSet<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition, int rowOffset, int colOffset) {
-        HashSet<ChessMove> pieceMove = new HashSet<>();
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
-
-        row+=rowOffset;
-        col+=rowOffset;
-        ChessPosition upPosition = new ChessPosition(row, myPosition.getColumn());
-        while ((row < 8) && (board.getPiece(upPosition) == null)) {
-            pieceMove.add(new ChessMove(myPosition, upPosition, null));
-            row++;
-            upPosition = new ChessPosition(row, myPosition.getColumn());
-        }
-        if (board.getPiece(upPosition) != null) {
-            if ((board.getPiece(upPosition).color) != color) {
-                pieceMove.add(new ChessMove(myPosition, upPosition, null));
-            }
-        } else {
-            pieceMove.add(new ChessMove(myPosition, upPosition, null));
-        }
-        row = myPosition.getRow();
-        return pieceMove;
-    }
 
     /**
      * Calculates all the positions a chess piece can move to
@@ -80,7 +57,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (board.getPiece(myPosition).getPieceType()) {
-            case ROOK -> {
+                case ROOK -> {
                 HashSet<ChessMove> rookMoves = new HashSet<>();
                 int row = myPosition.getRow();
                 int col = myPosition.getColumn();
