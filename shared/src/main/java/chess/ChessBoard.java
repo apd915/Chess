@@ -9,7 +9,7 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    ChessPiece[][] board;
+    private ChessPiece[][] board;
     final int rows = 8;
     final int columns = 8;
 
