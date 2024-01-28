@@ -65,6 +65,19 @@ public class ChessGame {
                 return new ChessPiece(currentTeam, ChessPiece.PieceType.KNIGHT).pieceMoves(board, startPosition);
             }
             case KING -> {
+                Collection<ChessMove> kingMoves = piece.pieceMoves(board, startPosition);
+                TeamColor enemy = opposingTeam(currentTeam);
+                Collection<ChessPosition> enemies = findTeam(enemy);
+                Collection<Collection<ChessMove>> opposingMoves = teamMoves(enemies);
+
+                for (ChessMove move : kingMoves) {
+                    int kingRow = move.getEndPosition().getRow();
+                    int kingCol = move.getEndPosition().getColumn();
+                    for (Collection<ChessMove> opposing : opposingMoves) {
+
+                    }
+                }
+
                 return new ChessPiece(currentTeam, ChessPiece.PieceType.KING).pieceMoves(board, startPosition);
             }
             case PAWN -> {
@@ -140,7 +153,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        return (isInCheck(teamColor) && isInStalemate(teamColor));
     }
 
     /**
@@ -151,8 +164,74 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingPosition = findPiece(ChessPiece.PieceType.KING, teamColor);
+        ChessPiece king = board.getPiece(kingPosition);
+        Collection<ChessMove> kingMoves = king.pieceMoves(board, kingPosition);
+
+        Collection<ChessPosition> opposingTeam = findTeam(opposingTeam(teamColor));
+        Collection<Collection<ChessMove>> opposingMoves = teamMoves(opposingTeam);
+
+        int dangerArea = 0;
+
+        for (ChessMove kingMove : kingMoves) {
+            int kingRow = kingMove.getEndPosition().getRow();
+            int kingCol = kingMove.getEndPosition().getColumn();
+            for (Collection<ChessMove> piece : opposingMoves) {
+                for (ChessMove move : piece) {
+                    int enemyRow = move.getEndPosition().getRow();
+                    int enemyCol = move.getEndPosition().getColumn();
+                    if ((enemyRow == kingRow) && (enemyCol == kingCol)) {
+                        dangerArea++;
+                    }
+                }
+            }
+        }
+
+        return (dangerArea >= kingMoves.size());
     }
+
+    public ChessPosition findPiece(ChessPiece.PieceType piece, TeamColor teamColor) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                ChessPiece currentPiece = board.getPiece(currentPosition);
+                if (currentPiece != null && currentPiece.getPieceType() == piece && currentPiece.getTeamColor() == teamColor) {
+                    return currentPosition;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Collection<ChessPosition> findTeam(TeamColor color) {
+        HashSet<ChessPosition> team = new HashSet<>();
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                ChessPiece currentPiece = board.getPiece(new ChessPosition(row, col));
+                ChessPosition currentPosition = new ChessPosition(row, col);
+                if (currentPiece != null) {
+                    if (currentPiece.color == color) {
+                        team.add(currentPosition);
+                    }
+                }
+            }
+        }
+        return team;
+    }
+
+    public Collection<Collection<ChessMove>> teamMoves(Collection<ChessPosition> piecePositions) {
+        HashSet<Collection<ChessMove>> teamMoves = new HashSet<>();
+
+        for (ChessPosition position : piecePositions) {
+            ChessPiece piece = board.getPiece(position);
+            Collection<ChessMove> moves = piece.pieceMoves(board, position);
+            teamMoves.add(moves);
+        }
+
+        return teamMoves;
+    }
+
+
 
     /**
      * Sets this game's chessboard with a given board
