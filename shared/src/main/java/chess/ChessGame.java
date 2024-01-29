@@ -89,6 +89,13 @@ public class ChessGame {
         TeamColor teamColor = pieceToMove.getTeamColor();
         Collection<ChessMove> valid = validMoves(startPosition);
 
+        if (pieceToMove == null) {
+            throw new InvalidMoveException("Invalid Move");
+        }
+        if (board.getPiece(startPosition).getTeamColor() != currentTeam) {
+            throw new InvalidMoveException("Invalid Move");
+        }
+
         if (valid.contains(move)) {
             if (move.getPromotionPiece() != null) {
                 switch (move.getPromotionPiece()) {
