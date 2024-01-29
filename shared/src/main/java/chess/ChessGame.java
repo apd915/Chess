@@ -53,6 +53,7 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
         switch (piece.getPieceType()) {
+            // Based on the piece, we determine which piece to implement
             case ROOK -> {
                 return determineValid(startPosition, piece);
             }
@@ -93,11 +94,14 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move");
         }
         if (board.getPiece(startPosition).getTeamColor() != currentTeam) {
+            // can't use move piece if it's opponents
             throw new InvalidMoveException("Invalid Move");
         }
 
         if (valid.contains(move)) {
+            // runs if the move is part of the valid list
             if (move.getPromotionPiece() != null) {
+                // path if there is a piece at given position
                 switch (move.getPromotionPiece()) {
                     case ROOK -> {
                         promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.ROOK);
@@ -134,14 +138,18 @@ public class ChessGame {
 
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
+                // Iterate through rows and columns get a piece and its position
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(row, col));
                 ChessPosition currentPosition = new ChessPosition(row, col);
                 if (currentPiece != null) {
                     if (currentPiece.color == opposingTeam) {
+                        // if there is a piece at position of the opposing color, get its possible moves
                         Collection<ChessMove> moves = new ChessPiece(opposingTeam, currentPiece.getPieceType()).pieceMoves(board, currentPosition);
                         for (ChessMove move : moves) {
+                            // Check its positions at the move
                             ChessPiece pieceAtPos = board.getPiece(move.getEndPosition());
                             if (pieceAtPos != null) {
+                                // if position is not empty, check whether it is a King
                                 if (pieceAtPos.getPieceType() == ChessPiece.PieceType.KING) {
                                     return true;
                                 }
@@ -178,6 +186,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        // find king, get its moves check its positions
         ChessPosition kingPosition = findPiece(ChessPiece.PieceType.KING, teamColor);
         ChessPiece king = board.getPiece(kingPosition);
         Collection<ChessMove> kingMoves = king.pieceMoves(board, kingPosition);
@@ -193,6 +202,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        // get the king, find the opposing team and make a list of their moves
         ChessPosition kingPosition = findPiece(ChessPiece.PieceType.KING, teamColor);
         ChessPiece king = board.getPiece(kingPosition);
         Collection<ChessMove> kingMoves = king.pieceMoves(board, kingPosition);
@@ -203,6 +213,7 @@ public class ChessGame {
         int dangerArea = 0;
 
         for (ChessMove kingMove : kingMoves) {
+            // for every possible move of the king, compare it with each move of its opponents
             int kingRow = kingMove.getEndPosition().getRow();
             int kingCol = kingMove.getEndPosition().getColumn();
             for (Collection<ChessMove> piece : opposingMoves) {
@@ -210,12 +221,13 @@ public class ChessGame {
                     int enemyRow = move.getEndPosition().getRow();
                     int enemyCol = move.getEndPosition().getColumn();
                     if ((enemyRow == kingRow) && (enemyCol == kingCol)) {
+                        // if a position matches perfectly, increase a counter
                         dangerArea++;
                     }
                 }
             }
         }
-
+        // if counter matches or exceeds, it means King is in stalemate
         return (dangerArea >= kingMoves.size());
     }
 
