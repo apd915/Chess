@@ -83,7 +83,37 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         // switch team color at the end
-        throw new RuntimeException("Not implemented");
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece pieceToMove = board.getPiece(startPosition);
+        TeamColor teamColor = pieceToMove.getTeamColor();
+        Collection<ChessMove> valid = validMoves(startPosition);
+
+        if (valid.contains(move)) {
+            if (move.getPromotionPiece() != null) {
+                switch (move.getPromotionPiece()) {
+                    case ROOK -> {
+                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.ROOK);
+                    }
+                    case KNIGHT -> {
+                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.KNIGHT);
+                    }
+                    case BISHOP -> {
+                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.BISHOP);
+                    }
+                    case QUEEN -> {
+                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.QUEEN);
+                    }
+                }
+            } else {
+                board.addPiece(endPosition, pieceToMove);
+                board.addPiece(startPosition, null);
+                currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+            }
+        }
+        else {
+            throw new InvalidMoveException("Invalid Move");
+        }
     }
 
     /**
@@ -297,4 +327,12 @@ public class ChessGame {
         }
         return validMoves;
     }
+
+
+    void promotePiece(ChessPosition startPosition, ChessPosition endPosition, TeamColor teamColor,ChessPiece.PieceType promoteTo) {
+        board.addPiece(endPosition, new ChessPiece(teamColor, promoteTo));
+        board.addPiece(startPosition, null);
+        currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+    }
+
 }
