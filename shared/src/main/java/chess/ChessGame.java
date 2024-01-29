@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -53,35 +54,22 @@ public class ChessGame {
         ChessPiece piece = board.getPiece(startPosition);
         switch (piece.getPieceType()) {
             case ROOK -> {
-                return new ChessPiece(currentTeam, ChessPiece.PieceType.ROOK).pieceMoves(board, startPosition);
+                return determineValid(startPosition, piece);
             }
             case BISHOP -> {
-                return new ChessPiece(currentTeam, ChessPiece.PieceType.BISHOP).pieceMoves(board, startPosition);
+                return determineValid(startPosition, piece);
             }
             case QUEEN -> {
-                return new ChessPiece(currentTeam, ChessPiece.PieceType.QUEEN).pieceMoves(board, startPosition);
+                return determineValid(startPosition, piece);
             }
             case KNIGHT -> {
-                return new ChessPiece(currentTeam, ChessPiece.PieceType.KNIGHT).pieceMoves(board, startPosition);
+                return determineValid(startPosition, piece);
             }
             case KING -> {
-                Collection<ChessMove> kingMoves = piece.pieceMoves(board, startPosition);
-                TeamColor enemy = opposingTeam(currentTeam);
-                Collection<ChessPosition> enemies = findTeam(enemy);
-                Collection<Collection<ChessMove>> opposingMoves = teamMoves(enemies);
-
-                for (ChessMove move : kingMoves) {
-                    int kingRow = move.getEndPosition().getRow();
-                    int kingCol = move.getEndPosition().getColumn();
-                    for (Collection<ChessMove> opposing : opposingMoves) {
-
-                    }
-                }
-
-                return new ChessPiece(currentTeam, ChessPiece.PieceType.KING).pieceMoves(board, startPosition);
+                return determineValid(startPosition, piece);
             }
             case PAWN -> {
-                return new ChessPiece(currentTeam, ChessPiece.PieceType.PAWN).pieceMoves(board, startPosition);
+                return determineValid(startPosition, piece);
             }
         }
         return null;
@@ -153,7 +141,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return (isInCheck(teamColor) && isInStalemate(teamColor));
+        ChessPosition kingPosition = findPiece(ChessPiece.PieceType.KING, teamColor);
+        ChessPiece king = board.getPiece(kingPosition);
+        Collection<ChessMove> kingMoves = king.pieceMoves(board, kingPosition);
+        checkmateHelper(kingPosition, king, kingMoves);
+        return (isInCheck(teamColor) && checkmateHelper(kingPosition, king, kingMoves));
     }
 
     /**
@@ -188,6 +180,24 @@ public class ChessGame {
         }
 
         return (dangerArea >= kingMoves.size());
+    }
+
+    /**
+     * Sets this game's chessboard with a given board
+     *
+     * @param board the new board to use
+     */
+    public void setBoard(ChessBoard board)   {
+        this.board = board;
+    }
+
+    /**
+     * Gets the current chessboard
+     *
+     * @return the chessboard
+     */
+    public ChessBoard getBoard() {
+        return this.board;
     }
 
     public ChessPosition findPiece(ChessPiece.PieceType piece, TeamColor teamColor) {
@@ -231,23 +241,60 @@ public class ChessGame {
         return teamMoves;
     }
 
+    boolean checkmateHelper(ChessPosition kingPosition, ChessPiece king, Collection<ChessMove> kingMoves) {
+        int death = 0;
+        for (ChessMove move : kingMoves) {
+            if (board.getPiece(move.getEndPosition()) != null) {
+                ChessPiece piece = board.getPiece(move.getEndPosition());
+                board.addPiece(move.getEndPosition(), king);
+                board.addPiece(kingPosition, null);
+                if (isInCheck(king.getTeamColor())) {
+                    death++;
+                }
+                board.addPiece(kingPosition, king);
+                board.addPiece(move.getEndPosition(), piece);
+            }
+            else {
+                board.addPiece(move.getEndPosition(), king);
+                board.addPiece(kingPosition, null);
+                if (isInCheck(king.getTeamColor())) {
+                    death++;
+                }
+                board.addPiece(kingPosition, king);
+                board.addPiece(move.getEndPosition(), null);
+            }
 
+        }
 
-    /**
-     * Sets this game's chessboard with a given board
-     *
-     * @param board the new board to use
-     */
-    public void setBoard(ChessBoard board)   {
-        this.board = board;
+        return (death == kingMoves.size());
     }
 
-    /**
-     * Gets the current chessboard
-     *
-     * @return the chessboard
-     */
-    public ChessBoard getBoard() {
-        return this.board;
+    Collection<ChessMove> determineValid(ChessPosition startPosition,ChessPiece piece) {
+        Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
+        TeamColor teamColor = piece.getTeamColor();
+        Collection<ChessMove> validMoves = new HashSet<>();
+
+        for (ChessMove move : pieceMoves) {
+            ChessPosition endPosition = move.getEndPosition();
+            if (board.getPiece(endPosition) != null) {
+                ChessPiece opposingPiece = board.getPiece(endPosition);
+                board.addPiece(move.getEndPosition(), piece);
+                board.addPiece(startPosition, null);
+                if (!isInCheck(teamColor)) {
+                    validMoves.add(move);
+                }
+                board.addPiece(startPosition, piece);
+                board.addPiece(endPosition, opposingPiece);
+            } else  {
+                board.addPiece(endPosition, piece);
+                board.addPiece(startPosition, null);
+                if (!isInCheck(teamColor)) {
+                    validMoves.add(move);
+                }
+                board.addPiece(startPosition, piece);
+                board.addPiece(endPosition, null);
+            }
+        }
+        return validMoves;
     }
 }
