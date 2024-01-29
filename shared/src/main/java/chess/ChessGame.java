@@ -237,7 +237,7 @@ public class ChessGame {
         return this.board;
     }
 
-    public ChessPosition findPiece(ChessPiece.PieceType piece, TeamColor teamColor) {
+    private ChessPosition findPiece(ChessPiece.PieceType piece, TeamColor teamColor) {
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 ChessPosition currentPosition = new ChessPosition(row, col);
@@ -250,7 +250,7 @@ public class ChessGame {
         return null;
     }
 
-    public Collection<ChessPosition> findTeam(TeamColor color) {
+    private Collection<ChessPosition> findTeam(TeamColor color) {
         HashSet<ChessPosition> team = new HashSet<>();
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
@@ -266,7 +266,7 @@ public class ChessGame {
         return team;
     }
 
-    public Collection<Collection<ChessMove>> teamMoves(Collection<ChessPosition> piecePositions) {
+    private Collection<Collection<ChessMove>> teamMoves(Collection<ChessPosition> piecePositions) {
         HashSet<Collection<ChessMove>> teamMoves = new HashSet<>();
 
         for (ChessPosition position : piecePositions) {
@@ -278,7 +278,7 @@ public class ChessGame {
         return teamMoves;
     }
 
-    boolean checkmateHelper(ChessPosition kingPosition, ChessPiece king, Collection<ChessMove> kingMoves) {
+    private boolean checkmateHelper(ChessPosition kingPosition, ChessPiece king, Collection<ChessMove> kingMoves) {
         int death = 0;
         for (ChessMove move : kingMoves) {
             if (board.getPiece(move.getEndPosition()) != null) {
@@ -306,7 +306,7 @@ public class ChessGame {
         return (death == kingMoves.size());
     }
 
-    Collection<ChessMove> determineValid(ChessPosition startPosition,ChessPiece piece) {
+    private Collection<ChessMove> determineValid(ChessPosition startPosition,ChessPiece piece) {
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
         TeamColor teamColor = piece.getTeamColor();
         Collection<ChessMove> validMoves = new HashSet<>();
@@ -336,7 +336,7 @@ public class ChessGame {
     }
 
 
-    void promotePiece(ChessPosition startPosition, ChessPosition endPosition, TeamColor teamColor,ChessPiece.PieceType promoteTo) {
+    private void promotePiece(ChessPosition startPosition, ChessPosition endPosition, TeamColor teamColor,ChessPiece.PieceType promoteTo) {
         board.addPiece(endPosition, new ChessPiece(teamColor, promoteTo));
         board.addPiece(startPosition, null);
         currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
