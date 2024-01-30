@@ -250,6 +250,7 @@ public class ChessGame {
     }
 
     private ChessPosition findPiece(ChessPiece.PieceType piece, TeamColor teamColor) {
+        // Look for a specific piece and its color
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 ChessPosition currentPosition = new ChessPosition(row, col);
@@ -263,6 +264,8 @@ public class ChessGame {
     }
 
     private Collection<ChessPosition> findTeam(TeamColor color) {
+        // Look for the positions of a whole team of a given color
+        // Return a list of these positions
         HashSet<ChessPosition> team = new HashSet<>();
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
@@ -291,6 +294,9 @@ public class ChessGame {
     }
 
     private boolean checkmateHelper(ChessPosition kingPosition, ChessPiece king, Collection<ChessMove> kingMoves) {
+        //Go through each move of the King, see if at that position it would hypothetically be in check,
+        // if true, increase counter
+        // if death counter matches moves of King, it means he's threatened from all positions
         int death = 0;
         for (ChessMove move : kingMoves) {
             if (board.getPiece(move.getEndPosition()) != null) {
@@ -319,22 +325,28 @@ public class ChessGame {
     }
 
     private Collection<ChessMove> determineValid(ChessPosition startPosition,ChessPiece piece) {
+        // Get a piece and a start position, retrieve moves of piece at that position, initialize a list
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, startPosition);
         TeamColor teamColor = piece.getTeamColor();
         Collection<ChessMove> validMoves = new HashSet<>();
 
         for (ChessMove move : pieceMoves) {
+            //Go through each move, check if it would hypothetically cause a Check
+            // Two scenarios, one where endPosition is occupied and one where it is open
             ChessPosition endPosition = move.getEndPosition();
             if (board.getPiece(endPosition) != null) {
+                //endPosition is occupied
                 ChessPiece opposingPiece = board.getPiece(endPosition);
                 board.addPiece(move.getEndPosition(), piece);
                 board.addPiece(startPosition, null);
                 if (!isInCheck(teamColor)) {
+                    //if it doesn't cause check, add it to validMoves
                     validMoves.add(move);
                 }
                 board.addPiece(startPosition, piece);
                 board.addPiece(endPosition, opposingPiece);
             } else  {
+                //endPosition is open
                 board.addPiece(endPosition, piece);
                 board.addPiece(startPosition, null);
                 if (!isInCheck(teamColor)) {
@@ -349,6 +361,8 @@ public class ChessGame {
 
 
     private void promotePiece(ChessPosition startPosition, ChessPosition endPosition, TeamColor teamColor,ChessPiece.PieceType promoteTo) {
+        //Takes into account what would happen if a pawn gets to the end and an input is given to what piece to promote to
+        //Change team color at the end as turn ends.
         board.addPiece(endPosition, new ChessPiece(teamColor, promoteTo));
         board.addPiece(startPosition, null);
         currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
