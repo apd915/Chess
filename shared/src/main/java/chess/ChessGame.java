@@ -166,17 +166,7 @@ public class ChessGame {
      * Helper function for isInCheck
      */
     public TeamColor opposingTeam(TeamColor teamColor) {
-        switch (teamColor) {
-            case BLACK -> {
-                return TeamColor.WHITE;
-            }
-            case WHITE -> {
-                return TeamColor.BLACK;
-            }
-            default -> {
-                return null;
-            }
-        }
+        return (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     /**
