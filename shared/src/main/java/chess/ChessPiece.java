@@ -134,9 +134,6 @@ public class ChessPiece {
                     col = myPosition.getColumn();
                 }
 
-                for (ChessMove chessMove: rookMoves) {
-                    System.out.println(chessMove);
-                }
                 return rookMoves;
             }
 
@@ -315,9 +312,6 @@ public class ChessPiece {
                     }
                     row = myPosition.getRow();
                     col = myPosition.getColumn();
-                }
-                for (ChessMove chessMove: bishopMoves) {
-                    System.out.println(chessMove);
                 }
                 return bishopMoves;
             }
