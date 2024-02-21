@@ -8,6 +8,9 @@ public class RegistrationHandler implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        return null;
+        System.out.println(request.body());
+        // transform request.body() into userData object.
+        return "hello";
     }
+
 }
