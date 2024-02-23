@@ -6,7 +6,6 @@ import handler.RegistrationHandler;
 import org.eclipse.jetty.server.Authentication;
 
 public class RegistrationService {
-
 //    public RegistrationResponse register(UserData user) {
 //
 //    }
