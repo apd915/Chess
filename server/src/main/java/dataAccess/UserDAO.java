@@ -1,16 +1,12 @@
 package dataAccess;
 
-public class UserDAO {
-//    public createUser() {
-//
-//    }
+import Models.UserData;
 
-//    public getUser() {
-//
-//    }
+public interface UserDAO {
+    void createUser(String username, String password);
 
-//    public deleteUsers() {
-//
-//    }
+    UserData getUser(String username);
+
+    void deleteUsers();
 
 }

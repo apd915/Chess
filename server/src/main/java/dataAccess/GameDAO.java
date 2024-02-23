@@ -1,25 +1,21 @@
 package dataAccess;
 
-public class GameDAO {
-//    public createGame() {
-//
-//    }
+import Models.GameData;
+import chess.ChessGame;
 
-//    public getGame() {
-//
-//    }
+import java.util.HashSet;
 
-//    public updateGame() {
-//
-//    }
+public interface GameDAO {
+    ChessGame createGame(ChessGame game);
 
-//    public getGames() {
-// calls getGame multiple times
-//    }
+    GameData getGame(int gameID);
 
-//    public deleteGames() {
-//        will probably call getGames as well
-//    }
+    GameData updateGame(String username, String ClientColor);
 
+    HashSet<GameData> getGames();
+    // will probaly call getGame iteratively
+
+    void deleteGames();
+    // will probably call getGames
 
 }

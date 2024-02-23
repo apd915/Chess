@@ -1,20 +1,15 @@
 package dataAccess;
 
-public class AuthDAO {
+import Models.AuthData;
 
-//    public createAuth() {
-//
-//    }
+public interface AuthDAO {
 
-//    public getAuth() {
-//
-//    }
+    void createAuth(String username);
 
-//    public deleteAuth() {
-//
-//    }
+    AuthData getAuth(String authToken);
 
-//    public deleteAuths() {
-//
-//    }
+    void deleteAuth(String authToken);
+
+    void deleteAuths();
+
 }

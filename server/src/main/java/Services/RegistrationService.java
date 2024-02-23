@@ -7,8 +7,8 @@ import org.eclipse.jetty.server.Authentication;
 
 public class RegistrationService {
 
-    public RegistrationResponse register(UserData user) {
-
-    }
+//    public RegistrationResponse register(UserData user) {
+//
+//    }
 
 }
