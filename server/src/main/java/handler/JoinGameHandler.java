@@ -1,7 +1,12 @@
 package handler;
 
-public class JoinGameHandler {
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
-    public record joinGameRequest(String playerColor, int gameID){
+public class JoinGameHandler implements Route {
+    @Override
+    public Object handle(Request request, Response response) {
+        return response;
     }
 }

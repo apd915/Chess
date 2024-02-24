@@ -1,8 +1,16 @@
 package handler;
 
-public class LoginHandler {
+import com.google.gson.Gson;
+import spark.Request;
+import spark.Response;
+import spark.Route;
 
-    public record LoginRequest(String username, String password){
-}
+public class LoginHandler implements Route {
+
+    @Override
+    public Object handle(Request request, Response response) throws Exception {
+        return response;
+
+    }
 
 }
