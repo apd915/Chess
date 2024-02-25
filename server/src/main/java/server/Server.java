@@ -23,7 +23,7 @@ public class Server {
 //        Spark.get("/game", new ListGamesHandler());
 //        Spark.post("/game", new CreateGameHandler());
 //        Spark.put("/game", new JoinGameHandler());
-//        Spark.delete("/db", new ClearHandler());
+        Spark.delete("/db", new ClearHandler());
 
         Spark.awaitInitialization();
         return Spark.port();
