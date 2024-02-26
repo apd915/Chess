@@ -6,7 +6,7 @@ import chess.ChessGame;
 import java.util.HashSet;
 
 public interface GameDAO {
-    ChessGame createGame(ChessGame game);
+    void createGame(String gameName);
 
     GameData getGame(int gameID);
 

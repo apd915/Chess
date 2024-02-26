@@ -30,10 +30,6 @@ public class RegistrationHandler implements Route {
 
         RegistrationService registration = new RegistrationService();
         Object registerUser = registration.register(userData, userDAO, authDAO);
-//        int status = registration.
-        // gson takes in an object, turns it into json. the object should have as a parameter the left side of the response
-        // For this one it will be an authData object that will be passed in as Json
-//        System.out.println(gson.toJson("\"username\":\"\", \"authToken\":\"\" "));
 
         if (registerUser instanceof AuthData) {
             response.type("application/json");
@@ -49,30 +45,7 @@ public class RegistrationHandler implements Route {
                     response.type("application/json");
                     response.status(403);
                     return gson.toJson(registerUser);
-        }
-//        switch (registerUser) {
-//            case "\"message\": \"Error: bad request\"":
-//                response.type("application/json");
-//                response.status(400 );
-//                return gson.toJson(registerUser);
-//
-//            case "\"message\": \"Error: username taken\"":
-//                response.type("application/json");
-//                response.status(403 );
-//                return gson.toJson(registerUser);
-//
-//            case "\"message\": \"Error: unexpected error\"":
-//                response.type("application/json");
-//                response.status(500 );
-//                return gson.toJson(registerUser);
-//
-//            default:
-//                response.type("application/json");
-//                response.status(200);
-//                return gson.toJson("\"username\":\"\", \"authToken\":\"\" ");
-
-
-
+            }
         }
         response.type("application/json");
         response.status(500 );

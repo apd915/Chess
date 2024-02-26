@@ -31,7 +31,7 @@ public class ClearHandler implements Route {
         if (clearResponse == null) {
             response.type("application/json");
             response.status(200);
-            return gson.toJson(clearResponse);
+            return "{}";
         }
 
         response.type("application/json");

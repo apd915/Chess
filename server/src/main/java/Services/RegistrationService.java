@@ -23,7 +23,6 @@ public class RegistrationService {
 
         userDAO.createUser(user);
         authDAO.createAuth(user.username());
-        String authToken = authDAO.getToken(user.username());
 
         RegistrationResponse response = new RegistrationResponse(200, authDAO, user.username());
         return response.getResponse();
