@@ -13,7 +13,7 @@ public class LoginService {
         UserData user = userDAO.getUser(userData.username());
         if (user == null || (!Objects.equals(user.password(), userData.password()))) {
             LoginResponse response = new LoginResponse(401, null, null);
-            return response;
+            return response.getResponse();
         }
         authDAO.createAuth(user.username());
 
