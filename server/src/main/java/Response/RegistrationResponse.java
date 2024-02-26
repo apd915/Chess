@@ -20,11 +20,11 @@ public class RegistrationResponse {
                 AuthData authData = authDAO.getAuth(authToken);
                 return authData;
             case 400:
-                return new ErrorResponse("\"Error: bad request\"");
+                return new ErrorResponse("Error: bad request");
             case 403:
-                return new ErrorResponse("\"Error: username taken\"");
+                return new ErrorResponse("Error: username taken");
             default:
-                return new ErrorResponse("\"Error: unexpected error\"");
+                return new ErrorResponse("Error: unexpected error");
         }
 
     }

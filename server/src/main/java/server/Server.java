@@ -1,15 +1,14 @@
 package server;
 
-import dataAccess.AuthDAO;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDAO;
-import dataAccess.UserDAO;
+import dataAccess.*;
 import handler.*;
+import model.GameData;
 import spark.*;
 
 public class Server {
     UserDAO userDAO = new MemoryUserDAO();
     AuthDAO authDAO = new MemoryAuthDAO();
+    GameDAO gameDAO = new MemoryGameDAO();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -23,7 +22,7 @@ public class Server {
 //        Spark.get("/game", new ListGamesHandler());
 //        Spark.post("/game", new CreateGameHandler());
 //        Spark.put("/game", new JoinGameHandler());
-        Spark.delete("/db", new ClearHandler());
+        Spark.delete("/db", new ClearHandler(userDAO, authDAO, gameDAO));
 
         Spark.awaitInitialization();
         return Spark.port();

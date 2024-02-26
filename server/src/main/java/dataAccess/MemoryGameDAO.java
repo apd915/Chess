@@ -1,19 +1,23 @@
 package dataAccess;
 
+import model.AuthData;
 import model.GameData;
 import chess.ChessGame;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class MemoryGameDAO implements GameDAO{
+
+    final private HashMap<Integer, GameData> games = new HashMap<>();
     @Override
     public ChessGame createGame(ChessGame game) {
-        return null;
+        return game;
     }
 
     @Override
     public GameData getGame(int gameID) {
-        return null;
+        return games.get(gameID);
     }
 
     @Override
@@ -23,11 +27,11 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public HashSet<GameData> getGames() {
-        return null;
+        return new HashSet<>(games.values());
     }
 
     @Override
     public void deleteGames() {
-
+        games.clear();
     }
 }

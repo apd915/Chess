@@ -42,13 +42,13 @@ public class RegistrationHandler implements Route {
         }
         else if (registerUser instanceof ErrorResponse) {
             switch (((ErrorResponse) registerUser).message()) {
-                case "\"Error: bad request\"":
+                case "Error: bad request":
                     response.status(400);
                     return gson.toJson(registerUser);
-                case "\"Error: username taken\"":
+                case "Error: username taken":
                     response.type("application/json");
-                response.status(403);
-                return gson.toJson(registerUser);
+                    response.status(403);
+                    return gson.toJson(registerUser);
         }
 //        switch (registerUser) {
 //            case "\"message\": \"Error: bad request\"":
