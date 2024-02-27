@@ -14,7 +14,7 @@ public class MemoryGameDAO implements GameDAO{
 
     final private HashMap<Integer, GameData> games = new HashMap<>();
     final private HashSet<ListGamesInfo> gamesInfo = new HashSet<>();
-    final private HashMap<String, Integer> ID = new HashMap<>();
+    final private HashMap<String, Integer> id = new HashMap<>();
     final private HashMap<Integer, ListGamesInfo> gamesInfoMap = new HashMap<>();
     Random random = new Random();
     @Override
@@ -25,7 +25,7 @@ public class MemoryGameDAO implements GameDAO{
         gamesInfoMap.put(gameID, gameInfo);
         games.put(gameID, game);
         gamesInfo.add(gameInfo);
-        ID.put(gameName, gameID);
+        id.put(gameName, gameID);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData updateGame(GameData game, String username, String ClientColor) {
-        if (Objects.equals(ClientColor, "WHITE")) {
+    public GameData updateGame(GameData game, String username, String clientColor) {
+        if (Objects.equals(clientColor, "WHITE")) {
             GameData updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
             games.remove(game.gameID());
             games.put(updatedGame.gameID(), updatedGame );
@@ -51,7 +51,7 @@ public class MemoryGameDAO implements GameDAO{
                     updatedGame.blackUsername(), updatedGame.gameName()));
             return updatedGame;
         }
-        if (Objects.equals(ClientColor, "BLACK")) {
+        if (Objects.equals(clientColor, "BLACK")) {
             GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
             games.remove(game.gameID());
             games.put(updatedGame.gameID(), updatedGame );
@@ -77,13 +77,13 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public int getGameID(String gameName) {
-        return ID.get(gameName);
+        return id.get(gameName);
     }
     @Override
     public void deleteGames() {
         games.clear();
         gamesInfo.clear();
-        ID.clear();
+        id.clear();
         gamesInfoMap.clear();
     }
 }
