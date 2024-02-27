@@ -1,8 +1,9 @@
 package dataAccess;
 
-import model.AuthData;
 import model.GameData;
 import chess.ChessGame;
+import model.ListGamesInfo;
+
 import java.util.Random;
 
 import java.util.HashMap;
@@ -11,12 +12,15 @@ import java.util.HashSet;
 public class MemoryGameDAO implements GameDAO{
 
     final private HashMap<Integer, GameData> games = new HashMap<>();
+    final private HashSet<ListGamesInfo> gamesInfo = new HashSet<>();
     Random random = new Random();
     @Override
     public void createGame(String gameName) {
         int gameID = random.nextInt(9999);
         GameData game = new GameData(gameID, null, null, gameName, new ChessGame());
+        ListGamesInfo gameInfo = new ListGamesInfo(gameID, null, null, gameName);
         games.put(gameID, game);
+        gamesInfo.add(gameInfo);
     }
 
     @Override
@@ -30,8 +34,8 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public HashSet<GameData> getGames() {
-        return new HashSet<>(games.values());
+    public HashSet<ListGamesInfo> getGames() {
+        return gamesInfo;
     }
 
     @Override

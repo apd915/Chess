@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.GameData;
 import chess.ChessGame;
+import model.ListGamesInfo;
 
 import java.util.HashSet;
 
@@ -12,7 +13,7 @@ public interface GameDAO {
 
     GameData updateGame(String username, String ClientColor);
 
-    HashSet<GameData> getGames();
+    HashSet<ListGamesInfo> getGames();
     // will probaly call getGame iteratively
 
     void deleteGames();
