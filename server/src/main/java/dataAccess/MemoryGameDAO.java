@@ -4,6 +4,7 @@ import model.GameData;
 import chess.ChessGame;
 import gameModels.ListGamesInfo;
 
+import java.util.Objects;
 import java.util.Random;
 
 import java.util.HashMap;
@@ -14,12 +15,14 @@ public class MemoryGameDAO implements GameDAO{
     final private HashMap<Integer, GameData> games = new HashMap<>();
     final private HashSet<ListGamesInfo> gamesInfo = new HashSet<>();
     final private HashMap<String, Integer> ID = new HashMap<>();
+    final private HashMap<Integer, ListGamesInfo> gamesInfoMap = new HashMap<>();
     Random random = new Random();
     @Override
     public void createGame(String gameName) {
         int gameID = random.nextInt(9999);
         GameData game = new GameData(gameID, null, null, gameName, new ChessGame());
         ListGamesInfo gameInfo = new ListGamesInfo(gameID, null, null, gameName);
+        gamesInfoMap.put(gameID, gameInfo);
         games.put(gameID, game);
         gamesInfo.add(gameInfo);
         ID.put(gameName, gameID);
@@ -31,8 +34,40 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData updateGame(String username, String ClientColor) {
-        return null;
+    public GameData updateGame(GameData game, String username, String ClientColor) {
+        if (Objects.equals(ClientColor, "WHITE")) {
+            GameData updatedGame = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+            games.remove(game.gameID());
+            games.put(updatedGame.gameID(), updatedGame );
+
+            ListGamesInfo gameInfo = gamesInfoMap.get(updatedGame.gameID());
+
+            gamesInfo.remove(gameInfo);
+            gamesInfo.add(new ListGamesInfo(updatedGame.gameID(), updatedGame.whiteUsername(),
+                    updatedGame.blackUsername(), updatedGame.gameName()));
+
+            gamesInfoMap.remove(updatedGame.gameID());
+            gamesInfoMap.put(updatedGame.gameID(), new ListGamesInfo(updatedGame.gameID(), updatedGame.whiteUsername(),
+                    updatedGame.blackUsername(), updatedGame.gameName()));
+            return updatedGame;
+        }
+        if (Objects.equals(ClientColor, "BLACK")) {
+            GameData updatedGame = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+            games.remove(game.gameID());
+            games.put(updatedGame.gameID(), updatedGame );
+
+            ListGamesInfo gameInfo = gamesInfoMap.get(updatedGame.gameID());
+
+            gamesInfo.remove(gameInfo);
+            gamesInfo.add(new ListGamesInfo(updatedGame.gameID(), updatedGame.whiteUsername(),
+                    updatedGame.blackUsername(), updatedGame.gameName()));
+
+            gamesInfoMap.remove(updatedGame.gameID());
+            gamesInfoMap.put(updatedGame.gameID(), new ListGamesInfo(updatedGame.gameID(), updatedGame.whiteUsername(),
+                    updatedGame.blackUsername(), updatedGame.gameName()));
+            return updatedGame;
+        }
+        return game;
     }
 
     @Override
@@ -49,5 +84,6 @@ public class MemoryGameDAO implements GameDAO{
         games.clear();
         gamesInfo.clear();
         ID.clear();
+        gamesInfoMap.clear();
     }
 }
