@@ -61,21 +61,8 @@ public class ChessPiece {
                 HashSet<ChessMove> rookMoves = new HashSet<>();
                 int row = myPosition.getRow();
                 int col = myPosition.getColumn();
-
                 RookMovesHelper rook = new RookMovesHelper();
-                if (row < 8) {
-                    rook.up(rookMoves, board, myPosition, row, color);
-                }
-                if (row > 1) {
-                    rook.down(rookMoves, board, myPosition, row, color);
-                }
-                if (col < 8) {
-                    rook.right(rookMoves, board, myPosition, col, color);
-                }
-                if (col > 1) {
-                    rook.left(rookMoves, board, myPosition, col, color);
-                }
-
+                rook.moves(rookMoves, board, myPosition, row, col, color);
                 return rookMoves;
             }
 
@@ -84,31 +71,7 @@ public class ChessPiece {
                 int row = myPosition.getRow();
                 int col = myPosition.getColumn();
                 KnightMovesHelper knight = new KnightMovesHelper();
-
-                if ((row+2 <= 8) && (col<8)){
-                    knight.upRight(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row+2 <= 8) && (col>1)){
-                    knight.upLeft(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row-2 >= 1) && (col<8)){
-                    knight.downRight(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row-2 >= 1) && (col>1)) {
-                    knight.downLeft(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row<8) && (col+2 <= 8)) {
-                    knight.rightUp(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row>1) && (col+2 <= 8)) {
-                    knight.rightDown(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row<8) && (col-2 >= 1)) {
-                    knight.leftUp(knightMoves, board, myPosition, row, col, color);
-                }
-                if ((row > 1) && (col-2>=1)) {
-                    knight.leftDown(knightMoves, board, myPosition, row, col, color);
-                }
+                knight.moves(knightMoves, board, myPosition, row, col, color);
                 return knightMoves;
             }
 
@@ -117,18 +80,7 @@ public class ChessPiece {
                 int row = myPosition.getRow();
                 int col = myPosition.getColumn();
                 BishopMovesHelper bishop = new BishopMovesHelper();
-                if ((row < 8) && (col < 8)) {
-                    bishop.upRight(bishopMoves, board, myPosition, row, col, color);
-                }
-                if ((row < 8) && (col > 1)) {
-                    bishop.upLeft(bishopMoves, board, myPosition, row, col, color);
-                }
-                if ((row > 1) && (col < 8)) {
-                    bishop.downRight(bishopMoves, board, myPosition, row, col, color);
-                }
-                if ((row > 1) && (col > 1)) {
-                    bishop.downLeft(bishopMoves, board, myPosition, row, col, color);
-                }
+                bishop.moves(bishopMoves, board, myPosition, row, col, color);
                 return bishopMoves;
             }
 
@@ -138,31 +90,8 @@ public class ChessPiece {
                 int col = myPosition.getColumn();
                 RookMovesHelper queenStraight = new RookMovesHelper();
                 BishopMovesHelper queenDiagonal = new BishopMovesHelper();
-
-                if (row < 8) {
-                    queenStraight.up(queenMoves, board, myPosition, row, color);
-                }
-                if (row > 1) {
-                    queenStraight.down(queenMoves, board, myPosition, row, color);
-                }
-                if (col < 8) {
-                    queenStraight.right(queenMoves, board, myPosition, col, color);
-                }
-                if (col > 1) {
-                    queenStraight.left(queenMoves, board, myPosition, col, color);
-                }
-                if ((row < 8) && (col < 8)) {
-                    queenDiagonal.upRight(queenMoves, board, myPosition, row, col, color);
-                }
-                if ((row < 8) && (col > 1)) {
-                    queenDiagonal.upLeft(queenMoves, board, myPosition, row, col, color);
-                }
-                if ((row > 1) && (col < 8)) {
-                    queenDiagonal.downRight(queenMoves, board, myPosition, row, col, color);
-                }
-                if ((row > 1) && (col > 1)) {
-                    queenDiagonal.downLeft(queenMoves, board, myPosition, row, col, color);
-                }
+                queenStraight.moves(queenMoves, board, myPosition, row, col, color);
+                queenDiagonal.moves(queenMoves, board, myPosition, row, col, color);
                 return queenMoves;
             }
 
@@ -171,7 +100,6 @@ public class ChessPiece {
                 int row = myPosition.getRow();
                 int col = myPosition.getColumn();
                 PawnKingHelper king = new PawnKingHelper();
-
                 if (row < 8) {
                     king.kingUp(kingMoves, board, myPosition, row, col, color);
                 }
@@ -204,7 +132,6 @@ public class ChessPiece {
                 int row = myPosition.getRow();
                 int col = myPosition.getColumn();
                 PawnKingHelper pawn = new PawnKingHelper();
-
                 if (color == ChessGame.TeamColor.WHITE) {
                     pawn.pawnWhite(pawnMoves, board, myPosition, row, col, ChessGame.TeamColor.WHITE);
                 }

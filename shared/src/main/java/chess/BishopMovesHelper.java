@@ -4,6 +4,21 @@ import java.util.HashSet;
 
 public class BishopMovesHelper {
 
+    public void moves(HashSet<ChessMove> bishopMoves, ChessBoard board, ChessPosition myPosition, int row, int col, ChessGame.TeamColor color) {
+        if ((row < 8) && (col < 8)) {
+            upRight(bishopMoves, board, myPosition, row, col, color);
+        }
+        if ((row < 8) && (col > 1)) {
+            upLeft(bishopMoves, board, myPosition, row, col, color);
+        }
+        if ((row > 1) && (col < 8)) {
+            downRight(bishopMoves, board, myPosition, row, col, color);
+        }
+        if ((row > 1) && (col > 1)) {
+            downLeft(bishopMoves, board, myPosition, row, col, color);
+        }
+    }
+
     public void upRight(HashSet<ChessMove> bishopMoves, ChessBoard board, ChessPosition myPosition, int row, int col, ChessGame.TeamColor color) {
         row++;
         col++;

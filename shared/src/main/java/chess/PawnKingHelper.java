@@ -88,12 +88,7 @@ public class PawnKingHelper {
         ChessPosition front = new ChessPosition(row+1, col);
         if (row == 2) {
             ChessPosition twoFront = new ChessPosition(row + 2, col);
-            if (board.getPiece(front) == null) {
-                pawnMoves.add(new ChessMove(myPosition, front, null));
-                if (board.getPiece(twoFront) == null) {
-                    pawnMoves.add(new ChessMove(myPosition, twoFront, null));
-                }
-            }
+            frontMove(pawnMoves, board, myPosition, front, twoFront);
         }
         if ((board.getPiece(front) == null) && (row+1 != 8)) {
             pawnMoves.add(new ChessMove(myPosition, front, null));
@@ -130,12 +125,7 @@ public class PawnKingHelper {
         ChessPosition front = new ChessPosition(row-1, col);
         if (row == 7) {
             ChessPosition twoFront = new ChessPosition(row - 2, col);
-            if (board.getPiece(front) == null) {
-                pawnMoves.add(new ChessMove(myPosition, front, null));
-                if (board.getPiece(twoFront) == null) {
-                    pawnMoves.add(new ChessMove(myPosition, twoFront, null));
-                }
-            }
+            frontMove(pawnMoves, board, myPosition, front, twoFront);
         }
         if ((board.getPiece(front) == null) && (row-1 != 1)) {
             pawnMoves.add(new ChessMove(myPosition, front, null));
@@ -173,5 +163,14 @@ public class PawnKingHelper {
         pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.BISHOP));
         pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.KNIGHT));
         pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.QUEEN));
+    }
+
+    public void frontMove(HashSet<ChessMove> pawnMoves, ChessBoard board, ChessPosition myPosition, ChessPosition front, ChessPosition twoFront) {
+        if (board.getPiece(front) == null) {
+            pawnMoves.add(new ChessMove(myPosition, front, null));
+            if (board.getPiece(twoFront) == null) {
+                pawnMoves.add(new ChessMove(myPosition, twoFront, null));
+            }
+        }
     }
 }

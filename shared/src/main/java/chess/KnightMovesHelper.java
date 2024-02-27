@@ -4,6 +4,33 @@ import java.util.HashSet;
 
 public class KnightMovesHelper {
 
+    public void moves(HashSet<ChessMove> knightMoves, ChessBoard board, ChessPosition myPosition, int row, int col, ChessGame.TeamColor color) {
+        if ((row+2 <= 8) && (col<8)){
+            upRight(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row+2 <= 8) && (col>1)){
+            upLeft(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row-2 >= 1) && (col<8)){
+            downRight(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row-2 >= 1) && (col>1)) {
+            downLeft(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row<8) && (col+2 <= 8)) {
+            rightUp(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row>1) && (col+2 <= 8)) {
+            rightDown(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row<8) && (col-2 >= 1)) {
+            leftUp(knightMoves, board, myPosition, row, col, color);
+        }
+        if ((row > 1) && (col-2>=1)) {
+            leftDown(knightMoves, board, myPosition, row, col, color);
+        }
+    }
+
     public void rightUp(HashSet<ChessMove> knightMoves, ChessBoard board, ChessPosition myPosition, int row, int col, ChessGame.TeamColor color) {
         row++;
         col+=2;

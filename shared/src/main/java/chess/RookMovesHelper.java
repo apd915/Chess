@@ -8,6 +8,21 @@ import java.util.HashSet;
 
 public class RookMovesHelper {
 
+    public void moves(HashSet<ChessMove> rookMoves, ChessBoard board, ChessPosition myPosition, int row, int col, ChessGame.TeamColor color) {
+        if (row < 8) {
+            up(rookMoves, board, myPosition, row, color);
+        }
+        if (row > 1) {
+            down(rookMoves, board, myPosition, row, color);
+        }
+        if (col < 8) {
+            right(rookMoves, board, myPosition, col, color);
+        }
+        if (col > 1) {
+            left(rookMoves, board, myPosition, col, color);
+        }
+    }
+
     public void up(HashSet<ChessMove> rookMoves, ChessBoard board, ChessPosition myPosition, int row, ChessGame.TeamColor color) {
         row++;
         ChessPosition upPosition = new ChessPosition(row, myPosition.getColumn());
