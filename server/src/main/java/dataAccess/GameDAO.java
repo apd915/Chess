@@ -1,8 +1,7 @@
 package dataAccess;
 
 import model.GameData;
-import chess.ChessGame;
-import model.ListGamesInfo;
+import gameModels.ListGamesInfo;
 
 import java.util.HashSet;
 
@@ -15,6 +14,8 @@ public interface GameDAO {
 
     HashSet<ListGamesInfo> getGames();
     // will probaly call getGame iteratively
+
+    int getGameID(String gameName);
 
     void deleteGames();
     // will probably call getGames

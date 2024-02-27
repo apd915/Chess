@@ -1,13 +1,11 @@
 package handler;
 
 import Services.ListGamesService;
-import Services.LogoutService;
-import Response.ListGamesResponse;
 import Response.ErrorResponse;
 import com.google.gson.Gson;
 import dataAccess.AuthDAO;
 import dataAccess.GameDAO;
-import model.ListGamesModel;
+import gameModels.ListGamesModel;
 import spark.Request;
 import spark.Response;
 import spark.Route;

@@ -2,7 +2,7 @@ package dataAccess;
 
 import model.GameData;
 import chess.ChessGame;
-import model.ListGamesInfo;
+import gameModels.ListGamesInfo;
 
 import java.util.Random;
 
@@ -13,6 +13,7 @@ public class MemoryGameDAO implements GameDAO{
 
     final private HashMap<Integer, GameData> games = new HashMap<>();
     final private HashSet<ListGamesInfo> gamesInfo = new HashSet<>();
+    final private HashMap<String, Integer> ID = new HashMap<>();
     Random random = new Random();
     @Override
     public void createGame(String gameName) {
@@ -21,6 +22,7 @@ public class MemoryGameDAO implements GameDAO{
         ListGamesInfo gameInfo = new ListGamesInfo(gameID, null, null, gameName);
         games.put(gameID, game);
         gamesInfo.add(gameInfo);
+        ID.put(gameName, gameID);
     }
 
     @Override
@@ -39,7 +41,13 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
+    public int getGameID(String gameName) {
+        return ID.get(gameName);
+    }
+    @Override
     public void deleteGames() {
         games.clear();
+        gamesInfo.clear();
+        ID.clear();
     }
 }

@@ -1,12 +1,10 @@
 package Services;
 
 import Response.ListGamesResponse;
-import Response.LogoutResponse;
 import dataAccess.AuthDAO;
 import dataAccess.GameDAO;
 import model.AuthData;
-import model.GameData;
-import model.ListGamesInfo;
+import gameModels.ListGamesInfo;
 
 import java.util.HashSet;
 

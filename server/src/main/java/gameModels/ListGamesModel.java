@@ -1,4 +1,4 @@
-package model;
+package gameModels;
 
 import java.util.HashSet;
 

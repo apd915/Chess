@@ -1,10 +1,7 @@
 package Response;
 
-import dataAccess.AuthDAO;
-import dataAccess.GameDAO;
-import model.AuthData;
-import model.ListGamesInfo;
-import model.ListGamesModel;
+import gameModels.ListGamesInfo;
+import gameModels.ListGamesModel;
 
 import java.util.HashSet;
 
