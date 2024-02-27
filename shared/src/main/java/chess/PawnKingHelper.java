@@ -102,10 +102,7 @@ public class PawnKingHelper {
             ChessPosition diagonalRight = new ChessPosition(row+1,col+1);
             if (board.getPiece(diagonalRight) != null) {
                 if ((board.getPiece(diagonalRight).color != color) && (row+1 == 8)) {
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.ROOK));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.BISHOP));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.KNIGHT));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.QUEEN));
+                    cornerCatch(pawnMoves, myPosition, diagonalRight);
                 }
                 if ((board.getPiece(diagonalRight).color != color) && (row+1 != 8)) {
                     pawnMoves.add(new ChessMove(myPosition, diagonalRight, null));
@@ -116,10 +113,7 @@ public class PawnKingHelper {
             ChessPosition diagonalLeft = new ChessPosition(row+1,col-1);
             if (board.getPiece(diagonalLeft) != null) {
                 if ((board.getPiece(diagonalLeft).color != color) && (row+1 == 8)) {
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.ROOK));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.BISHOP));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.KNIGHT));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.QUEEN));
+                    cornerCatch(pawnMoves, myPosition, diagonalLeft);
                 }
                 if ((board.getPiece(diagonalLeft).color != color) && (row+1 != 8)) {
                     pawnMoves.add(new ChessMove(myPosition, diagonalLeft, null));
@@ -128,10 +122,7 @@ public class PawnKingHelper {
         }
         if (row+1 == 8) {
             ChessPosition lastRow = new ChessPosition(row+1,col);
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.ROOK));
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.BISHOP));
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.KNIGHT));
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.QUEEN));
+            cornerCatch(pawnMoves, myPosition, lastRow);
         }
     }
 
@@ -153,10 +144,7 @@ public class PawnKingHelper {
             ChessPosition diagonalRight = new ChessPosition(row-1,col+1);
             if (board.getPiece(diagonalRight) != null) {
                 if ((board.getPiece(diagonalRight).color != color) && (row-1 == 1)) {
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.ROOK));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.BISHOP));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.KNIGHT));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalRight, ChessPiece.PieceType.QUEEN));
+                    cornerCatch(pawnMoves, myPosition, diagonalRight);
                 }
                 if ((board.getPiece(diagonalRight).color != color) && (row-1 != 1)) {
                     pawnMoves.add(new ChessMove(myPosition, diagonalRight, null));
@@ -167,10 +155,7 @@ public class PawnKingHelper {
             ChessPosition diagonalLeft = new ChessPosition(row-1,col-1);
             if (board.getPiece(diagonalLeft) != null) {
                 if ((board.getPiece(diagonalLeft).color != color) && (row-1 ==1)) {
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.ROOK));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.BISHOP));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.KNIGHT));
-                    pawnMoves.add(new ChessMove(myPosition, diagonalLeft, ChessPiece.PieceType.QUEEN));
+                    cornerCatch(pawnMoves, myPosition, diagonalLeft);
                 }
                 if ((board.getPiece(diagonalLeft).color != color) && (row-1!=1)) {
                     pawnMoves.add(new ChessMove(myPosition, diagonalLeft, null));
@@ -179,10 +164,14 @@ public class PawnKingHelper {
         }
         if (row-1 == 1) {
             ChessPosition lastRow = new ChessPosition(row-1,col);
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.ROOK));
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.BISHOP));
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.KNIGHT));
-            pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.QUEEN));
+            cornerCatch(pawnMoves, myPosition, lastRow);
         }
+    }
+
+    public void cornerCatch(HashSet<ChessMove> pawnMoves, ChessPosition myPosition, ChessPosition lastRow) {
+        pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.ROOK));
+        pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.BISHOP));
+        pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.KNIGHT));
+        pawnMoves.add(new ChessMove(myPosition, lastRow, ChessPiece.PieceType.QUEEN));
     }
 }
