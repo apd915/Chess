@@ -2,9 +2,14 @@ package dataAccess.SQLDAO;
 
 import ResponseException.ResponseException;
 import dataAccess.DataAccessException;
+import ResponseException.ResponseException;
 import dataAccess.DatabaseManager;
 import dataAccess.UserDAO;
 import model.UserData;
+
+import java.sql.SQLException;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLUserDAO  implements UserDAO {
 
@@ -19,7 +24,13 @@ public class SQLUserDAO  implements UserDAO {
     }
     @Override
     public void createUser(UserData userData) {
-
+        UpdateTable table = new UpdateTable();
+        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        try {
+            table.executeUpdate(statement, userData.username(), userData.password(), userData.email());
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
