@@ -36,4 +36,17 @@ public class SQLGameDAO implements GameDAO {
     public void deleteGames() {
 
     }
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  game (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(50) NULL,
+              `blackUsername` varchar(50) NULL,
+              'gameName' varchar(50) NOT NULL,
+              'game' varchar(500) NOT NULL,
+              PRIMARY KEY (`gameID`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
 }

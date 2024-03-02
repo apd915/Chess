@@ -3,16 +3,14 @@ package serviceTests;
 import Services.ClearService;
 import Services.CreateGameService;
 import Services.LoginService;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
+import dataAccess.MemoryDAO.MemoryAuthDAO;
+import dataAccess.MemoryDAO.MemoryGameDAO;
+import dataAccess.MemoryDAO.MemoryUserDAO;
 import gameModels.GameName;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ClearServiceTest {
 

@@ -2,9 +2,7 @@ package Services;
 
 import Response.RegistrationResponse;
 import dataAccess.AuthDAO;
-import dataAccess.MemoryUserDAO;
 import dataAccess.UserDAO;
-import model.AuthData;
 import model.UserData;
 
 public class RegistrationService {

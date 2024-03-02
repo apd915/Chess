@@ -1,8 +1,10 @@
 package server;
 
 import dataAccess.*;
+import dataAccess.MemoryDAO.MemoryAuthDAO;
+import dataAccess.MemoryDAO.MemoryGameDAO;
+import dataAccess.MemoryDAO.MemoryUserDAO;
 import handler.*;
-import model.GameData;
 import spark.*;
 
 public class Server {
@@ -11,6 +13,8 @@ public class Server {
     GameDAO gameDAO = new MemoryGameDAO();
 
     public int run(int desiredPort) {
+        // try catch for SQL DAO's. Implement them inside run()
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");

@@ -2,16 +2,14 @@ package serviceTests;
 
 import Services.ClearService;
 import Services.RegistrationService;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
+import dataAccess.MemoryDAO.MemoryAuthDAO;
+import dataAccess.MemoryDAO.MemoryGameDAO;
+import dataAccess.MemoryDAO.MemoryUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RegistrationServiceTest {
     MemoryUserDAO user = new MemoryUserDAO();

@@ -1,5 +1,6 @@
-package dataAccess;
+package dataAccess.MemoryDAO;
 
+import dataAccess.GameDAO;
 import model.GameData;
 import chess.ChessGame;
 import gameModels.ListGamesInfo;
@@ -10,7 +11,7 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class MemoryGameDAO implements GameDAO{
+public class MemoryGameDAO implements GameDAO {
 
     final private HashMap<Integer, GameData> games = new HashMap<>();
     final private HashSet<ListGamesInfo> gamesInfo = new HashSet<>();

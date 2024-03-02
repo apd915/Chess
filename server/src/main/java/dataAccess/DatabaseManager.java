@@ -2,6 +2,7 @@ package dataAccess;
 
 import java.sql.*;
 import java.util.Properties;
+import ResponseException.ResponseException;
 
 public class DatabaseManager {
     private static final String databaseName;
@@ -34,7 +35,7 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+    public static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + databaseName;
             var conn = DriverManager.getConnection(connectionUrl, user, password);
@@ -58,7 +59,7 @@ public class DatabaseManager {
      * }
      * </code>
      */
-    static Connection getConnection() throws DataAccessException {
+    public static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
             conn.setCatalog(databaseName);
@@ -67,4 +68,18 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
+
+    public static void configureDatabase(String[] createStatements) throws ResponseException, DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
+
 }
