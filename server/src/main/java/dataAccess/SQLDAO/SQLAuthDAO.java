@@ -1,11 +1,35 @@
 package dataAccess.SQLDAO;
 
+import ResponseException.ResponseException;
 import dataAccess.AuthDAO;
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import model.AuthData;
 
+import java.util.UUID;
+
 public class SQLAuthDAO implements AuthDAO {
+
+    public SQLAuthDAO() throws ResponseException {
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.getConnection();
+            DatabaseManager.configureDatabase(createStatements);
+        } catch (DataAccessException e) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", e.getMessage()));
+        }
+    }
     @Override
     public void createAuth(String username) {
+        String authToken = UUID.randomUUID().toString();
+        AuthData authData = new AuthData(authToken, username);
+        UpdateTable table = new UpdateTable();
+        var statement = "INSERT INTO authorization (authToken, username) VALUES (?, ?)";
+        try {
+            table.executeUpdate(statement, authData.authToken(), authData.username());
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
