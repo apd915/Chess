@@ -61,13 +61,24 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(String authToken) {
-
-
+        UpdateTable table = new UpdateTable();
+        var statement = "DELETE FROM authorization WHERE authToken=?";
+        try {
+            table.executeUpdate(statement, authToken);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteAuths() {
-
+        UpdateTable table = new UpdateTable();
+        var statement = "TRUNCATE authorization";
+        try {
+            table.executeUpdate(statement);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private AuthData readAuth(ResultSet rs) throws SQLException {

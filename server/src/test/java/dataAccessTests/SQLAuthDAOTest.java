@@ -35,7 +35,12 @@ class SQLAuthDAOTest {
     @Test
     public void successfulRun() throws ResponseException {
         SQLAuthDAO authDAO = new SQLAuthDAO();
-        AuthData authData = authDAO.getAuth("a960465d-27bf-414b-b389-5707f9e63c6c");
+//        authDAO.createAuth("apd915");
+//        authDAO.createAuth("sebacho");
+//        authDAO.createAuth("kili");
+        AuthData authData = authDAO.getAuth("dd568996-3199-485a-ba17-0f668b7ab595");
+//        authDAO.deleteAuth("a960465d-27bf-414b-b389-5707f9e63c6c");
+        authDAO.deleteAuths();
         System.out.println(authData);
     }
 
