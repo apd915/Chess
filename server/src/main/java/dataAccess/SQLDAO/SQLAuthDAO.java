@@ -6,6 +6,8 @@ import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
 import model.AuthData;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class SQLAuthDAO implements AuthDAO {
@@ -35,6 +37,20 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public AuthData getAuth(String authToken) {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM authorization WHERE authToken=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readAuth(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+//            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            return null;
+        }
         return null;
     }
 
@@ -46,11 +62,18 @@ public class SQLAuthDAO implements AuthDAO {
     @Override
     public void deleteAuth(String authToken) {
 
+
     }
 
     @Override
     public void deleteAuths() {
 
+    }
+
+    private AuthData readAuth(ResultSet rs) throws SQLException {
+        String authToken = rs.getString("authToken");
+        String username = rs.getString("username");
+        return new AuthData(authToken, username);
     }
 
 
@@ -59,7 +82,7 @@ public class SQLAuthDAO implements AuthDAO {
             CREATE TABLE IF NOT EXISTS  authorization (
               `authToken` varchar(256) NOT NULL,
               `username` varchar(50) NOT NULL,
-              PRIMARY KEY (`authToken`)
+              PRIMARY KEY (`authToken`),
               INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
