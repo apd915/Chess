@@ -25,6 +25,8 @@ public class SQLUserDAO  implements UserDAO {
     }
     @Override
     public void createUser(UserData userData) {
+        // Still have to hash passwords.
+
         UpdateTable table = new UpdateTable();
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try {
