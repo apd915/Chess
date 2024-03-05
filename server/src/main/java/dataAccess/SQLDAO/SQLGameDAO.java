@@ -1,31 +1,107 @@
 package dataAccess.SQLDAO;
 
+import ResponseException.ResponseException;
+import chess.ChessGame;
+import com.google.gson.Gson;
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import dataAccess.GameDAO;
 import gameModels.ListGamesInfo;
+import model.AuthData;
 import model.GameData;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class SQLGameDAO implements GameDAO {
+
+    public SQLGameDAO() throws ResponseException {
+        try {
+            DatabaseManager.createDatabase();
+            DatabaseManager.getConnection();
+            DatabaseManager.configureDatabase(createStatements);
+        } catch (DataAccessException e) {
+            throw new ResponseException(500, String.format("Unable to configure database: %s", e.getMessage()));
+        }
+    }
     @Override
     public void createGame(String gameName) {
+        UpdateTable table = new UpdateTable();
+        Gson gson = new Gson();
+        ChessGame game = new ChessGame();
+        String gameJson = gson.toJson(game);
+        var statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        try {
+            var id = table.executeUpdate(statement, null, null, gameName, gameJson);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
     @Override
     public GameData getGame(int gameID) {
-        return null;
-    }
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM authorization WHERE authToken=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGame(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+//            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            return null;
+        }
+        return null;    }
 
     @Override
     public GameData updateGame(GameData game, String username, String clientColor) {
-        return null;
+        if (Objects.equals(clientColor, "WHITE")) {
+            UpdateTable table = new UpdateTable();
+            var statement = "UPDATE game SET whiteUsername = ?, WHERE gameID = ?";
+            try {
+                table.executeUpdate(statement, username, game.gameID());
+                return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+            } catch (ResponseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (Objects.equals(clientColor, "BLACK")) {
+            UpdateTable table = new UpdateTable();
+            var statement = "UPDATE game SET blackUsername = ?, WHERE gameID = ?";
+            try {
+                table.executeUpdate(statement, username, game.gameID());
+                return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+            } catch (ResponseException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return game;
     }
 
     @Override
-    public HashSet<ListGamesInfo> getGames() {
-        return null;
+    public HashSet<ListGamesInfo> getGames()  {
+        var result = new HashSet<ListGamesInfo>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID FROM game";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(readGameInfo(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return result;
     }
+
 
     @Override
     public int getGameID(String gameName) {
@@ -34,7 +110,32 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void deleteGames() {
+        UpdateTable table = new UpdateTable();
+        var statement = "TRUNCATE game";
+        try {
+            table.executeUpdate(statement);
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private GameData readGame(ResultSet rs) throws SQLException {
+        Gson gson = new Gson();
+        int gameID = rs.getInt("gameID");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        String game = rs.getString("game");
+        ChessGame chessGame = gson.fromJson(game, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+    }
+
+    private ListGamesInfo readGameInfo(ResultSet rs) throws SQLException {
+        int gameID = rs.getInt("gameID");
+        String whiteUsername = rs.getString("whiteUsername");
+        String blackUsername = rs.getString("blackUsername");
+        String gameName = rs.getString("gameName");
+        return new ListGamesInfo(gameID, whiteUsername, blackUsername, gameName);
     }
 
     private final String[] createStatements = {
