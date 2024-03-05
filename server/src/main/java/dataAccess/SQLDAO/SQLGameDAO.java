@@ -32,7 +32,7 @@ public class SQLGameDAO implements GameDAO {
         Gson gson = new Gson();
         ChessGame game = new ChessGame();
         String gameJson = gson.toJson(game);
-        var statement = "INSERT INTO game (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
+        var statement = "INSERT INTO game (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
         try {
             var id = table.executeUpdate(statement, null, null, gameName, gameJson);
         } catch (ResponseException e) {
@@ -44,7 +44,7 @@ public class SQLGameDAO implements GameDAO {
     @Override
     public GameData getGame(int gameID) {
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM authorization WHERE authToken=?";
+            var statement = "SELECT * FROM game WHERE gameID=?";
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
@@ -63,7 +63,7 @@ public class SQLGameDAO implements GameDAO {
     public GameData updateGame(GameData game, String username, String clientColor) {
         if (Objects.equals(clientColor, "WHITE")) {
             UpdateTable table = new UpdateTable();
-            var statement = "UPDATE game SET whiteUsername = ?, WHERE gameID = ?";
+            var statement = "UPDATE game SET whiteUsername = ? WHERE gameID = ?";
             try {
                 table.executeUpdate(statement, username, game.gameID());
                 return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
@@ -73,7 +73,7 @@ public class SQLGameDAO implements GameDAO {
         }
         if (Objects.equals(clientColor, "BLACK")) {
             UpdateTable table = new UpdateTable();
-            var statement = "UPDATE game SET blackUsername = ?, WHERE gameID = ?";
+            var statement = "UPDATE game SET blackUsername = ? WHERE gameID = ?";
             try {
                 table.executeUpdate(statement, username, game.gameID());
                 return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
@@ -144,8 +144,8 @@ public class SQLGameDAO implements GameDAO {
               `gameID` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(50) NULL,
               `blackUsername` varchar(50) NULL,
-              'gameName' varchar(50) NOT NULL,
-              'game' text NOT NULL,
+              `gameName` varchar(50) NOT NULL,
+              `game` text NOT NULL,
               PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """

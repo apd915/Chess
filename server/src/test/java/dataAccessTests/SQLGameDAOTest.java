@@ -1,26 +1,32 @@
 package dataAccessTests;
 
 import ResponseException.ResponseException;
+import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
+import dataAccess.GameDAO;
 import dataAccess.SQLDAO.SQLAuthDAO;
+import dataAccess.SQLDAO.SQLGameDAO;
 import model.AuthData;
+import model.GameData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class SQLAuthDAOTest {
+class SQLGameDAOTest {
+
     @BeforeEach
     public void initiateDB() throws ResponseException {
         try {
             final String[] createStatements = {
-                    """
-            CREATE TABLE IF NOT EXISTS  authorization (
-              `authToken` varchar(256) NOT NULL,
-              `username` varchar(50) NOT NULL,
-              PRIMARY KEY (`authToken`),
-              INDEX(username)
+            """
+            CREATE TABLE IF NOT EXISTS  game (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(50) NULL,
+              `blackUsername` varchar(50) NULL,
+              `gameName` varchar(50) NOT NULL,
+              `game` text NOT NULL,
+              PRIMARY KEY (`gameID`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
             };
@@ -34,14 +40,16 @@ class SQLAuthDAOTest {
 
     @Test
     public void successfulRun() throws ResponseException {
-        SQLAuthDAO authDAO = new SQLAuthDAO();
-//        authDAO.createAuth("apd915");
-//        authDAO.createAuth("sebacho");
-//        authDAO.createAuth("kili");
+        AuthDAO authDAO = new SQLAuthDAO();
+        GameDAO gameDAO = new SQLGameDAO();
         AuthData authData = authDAO.getAuth("abb68800-7599-4bdb-84ab-81df3e7f0ec1");
-//        authDAO.deleteAuth("a960465d-27bf-414b-b389-5707f9e63c6c");
-//        authDAO.deleteAuths();
-//        System.out.println(authData);
+        gameDAO.createGame("Primer Juego");
+        GameData gameData = gameDAO.getGame(1);
+        gameDAO.updateGame(gameData, "kili", "BLACK");
+        gameDAO.updateGame(gameData, "alejo", "WHITE");
+        gameDAO.deleteGames();
+
+
     }
 
 }
