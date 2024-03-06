@@ -22,7 +22,7 @@ public class SQLAuthDAO implements AuthDAO {
         }
     }
     @Override
-    public void createAuth(String username) {
+    public AuthData createAuth(String username) {
         String authToken = UUID.randomUUID().toString();
         AuthData authData = new AuthData(authToken, username);
         UpdateTable table = new UpdateTable();
@@ -32,7 +32,7 @@ public class SQLAuthDAO implements AuthDAO {
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         }
-
+        return authData;
     }
 
     @Override
@@ -56,6 +56,20 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public String getToken(String username) {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT authToken FROM authorization WHERE username=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readToken(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+//            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            return null;
+        }
         return null;
     }
 
@@ -85,6 +99,11 @@ public class SQLAuthDAO implements AuthDAO {
         String authToken = rs.getString("authToken");
         String username = rs.getString("username");
         return new AuthData(authToken, username);
+    }
+
+    private String readToken(ResultSet rs) throws SQLException {
+        String authToken = rs.getString("authToken");
+        return authToken;
     }
 
 

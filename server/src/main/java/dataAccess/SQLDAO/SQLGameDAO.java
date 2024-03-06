@@ -88,7 +88,7 @@ public class SQLGameDAO implements GameDAO {
     public HashSet<ListGamesInfo> getGames()  {
         var result = new HashSet<ListGamesInfo>();
         try (var conn = DatabaseManager.getConnection()) {
-            var statement = "SELECT gameID FROM game";
+            var statement = "SELECT * FROM game";
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
                     while (rs.next()) {
@@ -105,6 +105,20 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public int getGameID(String gameName) {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID FROM game WHERE gameName=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, gameName);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readID(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+//            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            return 0;
+        }
         return 0;
     }
 
@@ -121,21 +135,59 @@ public class SQLGameDAO implements GameDAO {
 
     private GameData readGame(ResultSet rs) throws SQLException {
         Gson gson = new Gson();
+        String whiteUsername;
+        String blackUsername;
+        String gameName;
         int gameID = rs.getInt("gameID");
-        String whiteUsername = rs.getString("whiteUsername");
-        String blackUsername = rs.getString("blackUsername");
-        String gameName = rs.getString("gameName");
+        try {
+            whiteUsername = rs.getString("whiteUsername");
+        }
+        catch (SQLException e) {
+            whiteUsername = null;
+        }
+        try {
+            blackUsername = rs.getString("blackUsername");
+        }
+        catch (SQLException e) {
+            blackUsername = null;
+        }
+        try {
+            gameName = rs.getString("gameName");        }
+        catch (SQLException e) {
+            gameName = null;
+        }
         String game = rs.getString("game");
         ChessGame chessGame = gson.fromJson(game, ChessGame.class);
         return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
     }
 
     private ListGamesInfo readGameInfo(ResultSet rs) throws SQLException {
+        String whiteUsername;
+        String blackUsername;
+        String gameName;
         int gameID = rs.getInt("gameID");
-        String whiteUsername = rs.getString("whiteUsername");
-        String blackUsername = rs.getString("blackUsername");
-        String gameName = rs.getString("gameName");
+        try {
+            whiteUsername = rs.getString("whiteUsername");
+        }
+        catch (SQLException e) {
+            whiteUsername = null;
+        }
+        try {
+            blackUsername = rs.getString("blackUsername");
+        }
+        catch (SQLException e) {
+            blackUsername = null;
+        }
+        try {
+            gameName = rs.getString("gameName");        }
+        catch (SQLException e) {
+            gameName = null;
+        }
         return new ListGamesInfo(gameID, whiteUsername, blackUsername, gameName);
+    }
+
+    private int readID(ResultSet rs) throws SQLException {
+        return rs.getInt("gameID");
     }
 
     private final String[] createStatements = {
@@ -146,7 +198,8 @@ public class SQLGameDAO implements GameDAO {
               `blackUsername` varchar(50) NULL,
               `gameName` varchar(50) NOT NULL,
               `game` text NOT NULL,
-              PRIMARY KEY (`gameID`)
+              PRIMARY KEY (`gameID`),
+              INDEX (gameName)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };

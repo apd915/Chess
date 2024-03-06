@@ -1,12 +1,15 @@
 package dataAccess.SQLDAO;
 
 import ResponseException.ResponseException;
+import Services.LoginService;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import ResponseException.ResponseException;
 import dataAccess.DatabaseManager;
 import dataAccess.UserDAO;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -26,8 +29,9 @@ public class SQLUserDAO  implements UserDAO {
     @Override
     public void createUser(UserData userData) {
         // Still have to hash passwords.
-
+        LoginService service = new LoginService();
         UpdateTable table = new UpdateTable();
+//        String hashedPassword = service.storeUserPassword(userData.password());
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try {
             table.executeUpdate(statement, userData.username(), userData.password(), userData.email());
@@ -84,4 +88,6 @@ public class SQLUserDAO  implements UserDAO {
         var email = rs.getString("email");
         return new UserData(username, password, email);
     }
+
+
 }
