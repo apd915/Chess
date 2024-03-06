@@ -98,7 +98,7 @@ class SQLGameDAOTest {
     @Test
     public void badGet() throws ResponseException {
         GameDAO gameDAO = new SQLGameDAO();
-        GameData game = gameDAO.getGame(1);
+        GameData game = gameDAO.getGame(2);
         Assertions.assertNull(game);
     }
 
