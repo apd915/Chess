@@ -31,10 +31,10 @@ public class SQLUserDAO  implements UserDAO {
         // Still have to hash passwords.
         LoginService service = new LoginService();
         UpdateTable table = new UpdateTable();
-//        String hashedPassword = service.storeUserPassword(userData.password());
+        String hashedPassword = service.storeUserPassword(userData.password());
         var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
         try {
-            table.executeUpdate(statement, userData.username(), userData.password(), userData.email());
+            table.executeUpdate(statement, userData.username(), hashedPassword, userData.email());
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         }

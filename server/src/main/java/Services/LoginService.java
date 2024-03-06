@@ -12,9 +12,10 @@ import java.util.Objects;
 public class LoginService {
 
     public Object login(UserData userData, UserDAO userDAO, AuthDAO authDAO) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UserData user = userDAO.getUser(userData.username());
 //        String hashedPassword = storeUserPassword(userData.password());
-        if (user == null || (!Objects.equals(user.password(), userData.password()))) {
+        if (user == null || (!encoder.matches(userData.password(), user.password()))) {
             LoginResponse response = new LoginResponse(401, null, null);
             return response.getResponse();
         }
