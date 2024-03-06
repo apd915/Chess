@@ -7,10 +7,14 @@ import dataAccess.DatabaseManager;
 import dataAccess.GameDAO;
 import dataAccess.SQLDAO.SQLAuthDAO;
 import dataAccess.SQLDAO.SQLGameDAO;
+import dataAccess.SQLDAO.SQLUserDAO;
+import gameModels.ListGamesInfo;
 import model.AuthData;
 import model.GameData;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
+import java.util.HashSet;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SQLGameDAOTest {
@@ -38,18 +42,32 @@ class SQLGameDAOTest {
         }
     }
 
+    @AfterEach
+    public void clearTables() throws ResponseException {
+        SQLGameDAO gameDAO = new SQLGameDAO();
+        gameDAO.deleteGames();
+    }
+
     @Test
     public void successfulRun() throws ResponseException {
-        AuthDAO authDAO = new SQLAuthDAO();
         GameDAO gameDAO = new SQLGameDAO();
-        AuthData authData = authDAO.getAuth("abb68800-7599-4bdb-84ab-81df3e7f0ec1");
         gameDAO.createGame("Primer Juego");
         GameData gameData = gameDAO.getGame(1);
         gameDAO.updateGame(gameData, "kili", "BLACK");
         gameDAO.updateGame(gameData, "alejo", "WHITE");
-        gameDAO.deleteGames();
+        GameData newData = gameDAO.getGame(1);
+        Assertions.assertEquals(newData.blackUsername(), "kili");
+    }
 
-
+    @Test
+    public void failedRun() throws ResponseException {
+        GameDAO gameDAO = new SQLGameDAO();
+        gameDAO.createGame("Primer Juego");
+        gameDAO.createGame("Segundo Juego");
+        gameDAO.createGame("Tercer Juego");
+        gameDAO.createGame("Cuarto Juego");
+        HashSet<ListGamesInfo> games = gameDAO.getGames();
+        Assertions.assertNotEquals(games.size(), 5);
     }
 
 }

@@ -5,12 +5,15 @@ import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
 import dataAccess.SQLDAO.SQLAuthDAO;
 import model.AuthData;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SQLAuthDAOTest {
+
     @BeforeEach
     public void initiateDB() throws ResponseException {
         try {
@@ -32,16 +35,28 @@ class SQLAuthDAOTest {
         }
     }
 
+    @AfterEach
+    public void clearTables() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        authDAO.deleteAuths();
+    }
+
     @Test
     public void successfulRun() throws ResponseException {
         SQLAuthDAO authDAO = new SQLAuthDAO();
-//        authDAO.createAuth("apd915");
-//        authDAO.createAuth("sebacho");
-//        authDAO.createAuth("kili");
-        AuthData authData = authDAO.getAuth("abb68800-7599-4bdb-84ab-81df3e7f0ec1");
-//        authDAO.deleteAuth("a960465d-27bf-414b-b389-5707f9e63c6c");
-//        authDAO.deleteAuths();
-//        System.out.println(authData);
+        AuthData authData = authDAO.createAuth("apd915");
+        authDAO.createAuth("sebacho");
+        authDAO.createAuth("kili");
+        AuthData authorization = authDAO.getAuth(authData.authToken());
+        Assertions.assertEquals(authData, authorization);
+    }
+
+    @Test
+    public void failedRun() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.createAuth("apd915");
+        AuthData authData2 = authDAO.createAuth("sebacho");
+        Assertions.assertNotEquals(authData.authToken(), authData2.authToken());
     }
 
 }

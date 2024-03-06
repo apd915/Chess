@@ -3,10 +3,14 @@ package dataAccessTests;
 import ResponseException.ResponseException;
 import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
+import dataAccess.SQLDAO.SQLAuthDAO;
 import dataAccess.SQLDAO.SQLUserDAO;
 import model.UserData;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import spark.utils.Assert;
 
 class SQLUserDAOTest {
 
@@ -31,10 +35,15 @@ class SQLUserDAOTest {
         }
     }
 
+    @AfterEach
+    public void clearTables() throws ResponseException {
+        SQLUserDAO authDAO = new SQLUserDAO();
+        authDAO.deleteUsers();
+    }
+
     @Test
     public void successfulRun() throws ResponseException {
         SQLUserDAO userDAO = new SQLUserDAO();
-        userDAO.deleteUsers();
         UserData user = new UserData("apd915", "badboni", "apd@hotmail.com");
         UserData user2 = new UserData("kili", "jeibalbim", "kili@hotmail.com");
         UserData user3 = new UserData("sebacho", "jhayco", "sebacho@hotmail.com");
@@ -42,7 +51,14 @@ class SQLUserDAOTest {
         userDAO.createUser(user2);
         userDAO.createUser(user3);
         UserData retrievedUser = userDAO.getUser(user.username());
-        System.out.println(retrievedUser);
+        Assertions.assertEquals(user.username(), retrievedUser.username());
+    }
+
+    @Test
+    public void failedRun() throws ResponseException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData retrievedUser = userDAO.getUser("bad boni");
+        Assertions.assertNull(retrievedUser);
     }
 }
 
