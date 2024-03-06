@@ -59,4 +59,63 @@ class SQLAuthDAOTest {
         Assertions.assertNotEquals(authData.authToken(), authData2.authToken());
     }
 
+    @Test
+    public void goodCreate() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.createAuth("apd915");
+        AuthData retrieved = authDAO.getAuth(authData.authToken());
+        Assertions.assertNotNull(retrieved);
+    }
+
+    @Test
+    public void badCreate() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData retrieved = authDAO.getAuth("fioqenofgewognoew");
+        Assertions.assertNull(retrieved);
+    }
+
+    @Test
+    public void goodGet() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.createAuth("apd915");
+        AuthData retrieved = authDAO.getAuth(authData.authToken());
+        Assertions.assertEquals(retrieved.username(), "apd915");
+    }
+
+    @Test
+    public void badGet() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.createAuth("apd915");
+        AuthData authData2 = authDAO.createAuth("sebacho");
+        AuthData retrieved = authDAO.getAuth(authData.authToken());
+        Assertions.assertNotEquals(retrieved.username(), authData2.username());
+    }
+
+    @Test
+    public void goodToken() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.createAuth("apd915");
+        String authToken = authDAO.getToken("apd915");
+        Assertions.assertEquals(authData.authToken(), authToken);
+    }
+
+    @Test
+    public void badToken() throws ResponseException {
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.createAuth("apd915");
+        AuthData authData2 = authDAO.createAuth("sebacho");
+        Assertions.assertNotEquals(authData.authToken(), authData2.authToken());
+    }
+
+    @Test
+    public void clear() throws ResponseException{
+        SQLAuthDAO authDAO = new SQLAuthDAO();
+        authDAO.createAuth("apd915");
+        authDAO.createAuth("sebacho");
+        authDAO.createAuth("kili");
+        authDAO.deleteAuths();
+        String retrieved = authDAO.getToken("apd915");
+        Assertions.assertNull(retrieved);
+    }
+
 }

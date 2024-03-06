@@ -60,5 +60,33 @@ class SQLUserDAOTest {
         UserData retrievedUser = userDAO.getUser("bad boni");
         Assertions.assertNull(retrievedUser);
     }
+
+    @Test
+    public void goodGet() throws ResponseException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData user = new UserData("apd915", "badboni", "apd@hotmail.com");
+        UserData compare = userDAO.getUser("apd915");
+        Assertions.assertNotEquals(user, compare);
+    }
+
+    @Test
+    public void badGet() throws ResponseException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData user = new UserData("apd915", "badboni", "apd@hotmail.com");
+        UserData compare = userDAO.getUser("kili");
+        UserData user2 = new UserData("kili", "jeibalbim", "kili@hotmail.com");
+        Assertions.assertNotEquals(user, compare);
+    }
+
+    @Test
+    public void clear() throws ResponseException {
+        SQLUserDAO userDAO = new SQLUserDAO();
+        UserData user = new UserData("apd915", "badboni", "apd@hotmail.com");
+        UserData user2 = new UserData("kili", "jeibalbim", "kili@hotmail.com");
+        UserData user3 = new UserData("sebacho", "jhayco", "sebacho@hotmail.com");
+        userDAO.deleteUsers();
+        UserData compare = userDAO.getUser("kili");
+        Assertions.assertNull(compare);
+    }
 }
 
