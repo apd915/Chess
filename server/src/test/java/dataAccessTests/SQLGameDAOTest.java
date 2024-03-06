@@ -67,7 +67,7 @@ class SQLGameDAOTest {
         gameDAO.createGame("Tercer Juego");
         gameDAO.createGame("Cuarto Juego");
         HashSet<ListGamesInfo> games = gameDAO.getGames();
-        Assertions.assertNotEquals(games.size(), 5);
+        Assertions.assertNotEquals(games.size(), 3);
     }
 
 }
