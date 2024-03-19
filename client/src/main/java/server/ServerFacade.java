@@ -7,12 +7,36 @@ import java.io.*;
 import java.net.*;
 
 public class ServerFacade {
+
     private final String serverUrl;
 
     public ServerFacade(String url) {
         serverUrl = url;
     }
 
+
+    public Pet addPet(Pet pet) throws ResponseException {
+        var path = "/pet";
+        return this.makeRequest("POST", path, pet, Pet.class);
+    }
+
+    public void deletePet(int id) throws ResponseException {
+        var path = String.format("/pet/%s", id);
+        this.makeRequest("DELETE", path, null, null);
+    }
+
+    public void deleteAllPets() throws ResponseException {
+        var path = "/pet";
+        this.makeRequest("DELETE", path, null, null);
+    }
+
+    public Pet[] listPets() throws ResponseException {
+        var path = "/pet";
+        record listPetResponse(Pet[] pet) {
+        }
+        var response = this.makeRequest("GET", path, null, listPetResponse.class);
+        return response.pet();
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -30,6 +54,7 @@ public class ServerFacade {
         }
     }
 
+
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
@@ -37,6 +62,13 @@ public class ServerFacade {
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
+        }
+    }
+
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
+        var status = http.getResponseCode();
+        if (!isSuccessful(status)) {
+            throw new ResponseException(status, "failure: " + status);
         }
     }
 
@@ -53,12 +85,6 @@ public class ServerFacade {
         return response;
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-        var status = http.getResponseCode();
-        if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
-        }
-    }
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
