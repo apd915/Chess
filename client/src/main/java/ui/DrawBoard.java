@@ -24,20 +24,21 @@ public class DrawBoard {
     public DrawBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
-        out.print(ERASE_SCREEN);
+//        out.print(ERASE_SCREEN);
 
         board.resetBoard();
 
         drawX(out);
-        drawYReversed(out);
+        drawY(out);
         drawX(out);
 
         setBlack(out);
         out.println(EMPTY);
 
         drawX(out);
-        drawY(out);
+        drawYReversed(out);
         drawX(out);
+
 
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_WHITE);

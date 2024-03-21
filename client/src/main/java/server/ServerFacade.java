@@ -2,6 +2,12 @@ package server;
 
 import ResponseException.ResponseException;
 import com.google.gson.Gson;
+import gameModels.GameID;
+import gameModels.GameName;
+import gameModels.JoinGame;
+import gameModels.ListGamesInfo;
+import model.AuthData;
+import model.UserData;
 
 import java.io.*;
 import java.net.*;
@@ -9,34 +15,48 @@ import java.net.*;
 public class ServerFacade {
 
     private final String serverUrl;
+    // URL
 
     public ServerFacade(String url) {
         serverUrl = url;
     }
-
-
-//    public Pet addPet(Pet pet) throws ResponseException {
-//        var path = "/pet";
-//        return this.makeRequest("POST", path, pet, Pet.class);
-//    }
-
-    public void deletePet(int id) throws ResponseException {
-        var path = String.format("/pet/%s", id);
-        this.makeRequest("DELETE", path, null, null);
+    public ServerFacade() {
+        this.serverUrl = "http://localhost:8080";
     }
 
-    public void deleteAllPets() throws ResponseException {
-        var path = "/pet";
-        this.makeRequest("DELETE", path, null, null);
+
+
+    // Are some of these okay to be "void"?
+    // How to make use of the authToken
+    public AuthData registerUser(UserData userData) throws ResponseException {
+        var path = "/user";
+        return this.makeRequest("POST", path, userData, AuthData.class);
     }
 
-//    public Pet[] listPets() throws ResponseException {
-//        var path = "/pet";
-//        record listPetResponse(Pet[] pet) {
-//        }
-//        var response = this.makeRequest("GET", path, null, listPetResponse.class);
-//        return response.pet();
-//    }
+    public AuthData login(UserData userData) throws ResponseException{
+        var path = "/session";
+        return this.makeRequest("POST", path, userData, AuthData.class);
+    }
+
+    public Object logout() throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("DELETE", path, null, null);
+    }
+
+    public ListGamesInfo listGames() throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("GET", path, null, ListGamesInfo.class);
+    }
+
+    public GameID createGame(GameName gameName) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("POST", path, gameName, GameID.class);
+    }
+
+    public Object joinGame(JoinGame player) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("PUT", path, player, null);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
@@ -58,6 +78,7 @@ public class ServerFacade {
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
+            // add authToken: http.addRequestProperty("authorization", string authToken)
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
