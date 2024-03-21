@@ -32,13 +32,14 @@ public class ServerFacadeTests {
     @Test
     public void successfulRegister() throws ResponseException {
         ServerFacade server = new ServerFacade(url);
-        AuthData data = server.registerUser(new UserData("1234", "123", "123"));
+        AuthData data = server.registerUser(new UserData("me", "me", "123"));
         Assertions.assertNotNull(data.authToken());
     }
 
     @Test
-    public void failedRegister() {
+    public void failedRegister() throws ResponseException {
         ServerFacade server = new ServerFacade(url);
+        AuthData data = server.registerUser(new UserData("124354", "123", "123"));
         // already created user
         Assertions.assertThrows(ResponseException.class, () -> server.registerUser(new UserData("apd915", "123", "123")));
     }
@@ -91,7 +92,7 @@ public class ServerFacadeTests {
     public void successfulCreate() throws ResponseException {
         ServerFacade server = new ServerFacade(url);
         server.login(new UserData("me", "me", "123"));
-        GameID game = server.createGame(new GameName("NewGame"));
+        GameID game = server.createGame(new GameName("NewGame2"));
         Assertions.assertInstanceOf(GameID.class, game);
     }
 
@@ -106,7 +107,7 @@ public class ServerFacadeTests {
     public void successfulJoin() throws ResponseException {
         ServerFacade server = new ServerFacade(url);
         server.login(new UserData("me", "me", "123"));
-        GameID game = server.createGame(new GameName("joinGame3"));
+        GameID game = server.createGame(new GameName("joinGame4"));
         server.joinGame(new JoinGame("WHITE", game.gameID()));
         Assertions.assertTrue(true);
     }
