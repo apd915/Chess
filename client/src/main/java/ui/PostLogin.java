@@ -1,12 +1,13 @@
 package ui;
 
 import ResponseException.ResponseException;
-import gameModels.GameName;
-import gameModels.JoinGame;
+import com.google.gson.JsonObject;
+import gameModels.*;
 import server.ServerFacade;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -15,7 +16,9 @@ public class PostLogin {
 
     PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     ServerFacade server = new ServerFacade();
-    public PostLogin() {}
+
+    public PostLogin() {
+    }
 
     public boolean determineState() throws ResponseException {
         while (true) {
@@ -41,7 +44,7 @@ public class PostLogin {
                 }
                 case "observe": {
                     // difference between join with empty and observe?
-//                    observe(parameters);
+                    observe(parameters);
                     break;
                 }
                 case "logout": {
@@ -62,39 +65,170 @@ public class PostLogin {
         }
     }
 
-    private void logout(String[] parameters) throws ResponseException {
-        if (parameters.length != 1) {
-            out.print(SET_TEXT_COLOR_RED);
-            System.out.println("incorrect logout command.");
-        } else {
-            server.logout();
+    private void observe(String[] parameters) {
+        try {
+            if (parameters.length != 2) {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("incorrect observe commands.");
+            } else {
+                try {
+                    int num = Integer.parseInt(parameters[1]);
+                    server.joinGame(new JoinGame(null, num));
+                    DrawBoard board = new DrawBoard();
+                } catch (NumberFormatException e) {
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("<ID> field not a number.");
+                }
+            }
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 400:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Bad request.");
+                    break;
+                case 401:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unauthorized.");
+                    break;
+                case 403:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Username taken.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
         }
     }
 
-    private void join(String[] parameters) throws ResponseException {
-        if ((parameters.length == 3) || (parameters.length == 2)) {
-            try {
-                int num = Integer.parseInt(parameters[1]);
-                if (parameters[2] == "BLACK ") {
-
-                }
-                    server.joinGame(new JoinGame(parameters[2], num));
-            } catch (NumberFormatException e) {
+    private void logout(String[] parameters) {
+        try {
+            if (parameters.length != 1) {
                 out.print(SET_TEXT_COLOR_RED);
-                System.out.println("<ID> field not a number.");
+                System.out.println("incorrect logout command.");
+            } else {
+                server.logout();
             }
-        } else {
-            out.print(SET_TEXT_COLOR_RED);
-            System.out.println("incorrect join commands.");
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 401:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unauthorized.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
+        }
+    }
+
+    private void create(String[] parameters) {
+
+        try {
+            if (parameters.length != 2) {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("incorrect create commands.");
+            } else {
+                GameID gameID = server.createGame(new GameName(parameters[1]));
+                out.print(SET_TEXT_COLOR_YELLOW);
+                System.out.print("Your assigned ID is: ");
+                System.out.println(gameID.gameID());
+            }
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 400:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Bad request.");
+                    break;
+                case 401:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unauthorized.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
+        }
+    }
+
+    private void join(String[] parameters) {
+        try {
+            if ((parameters.length == 3) || (parameters.length == 2)) {
+                try {
+                    int num = Integer.parseInt(parameters[1]);
+                    if (parameters.length == 3) {
+                        if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
+                            server.joinGame(new JoinGame(parameters[2], num));
+                            new DrawBoard();
+                        }
+                    } else {
+                        server.joinGame(new JoinGame(null, num));
+                        new DrawBoard();
+                    }
+
+                } catch (NumberFormatException e) {
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("<ID> field not a number.");
+                }
+            } else {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("incorrect join commands.");
+            }
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 400:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Bad request.");
+                    break;
+                case 401:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unauthorized.");
+                    break;
+                case 403:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Username taken.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
         }
     }
 
     private void list(String[] parameters) throws ResponseException {
-        if (parameters.length != 1) {
-            out.print(SET_TEXT_COLOR_RED);
-            System.out.println("incorrect list commands.");
-        } else {
-            server.listGames();
+        try {
+            if (parameters.length != 1) {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("incorrect list commands.");
+            } else {
+                ListGamesModel games = server.listGames();
+                for (ListGamesInfo game : games.games()) {
+                    out.print(SET_TEXT_COLOR_YELLOW);
+                    System.out.print("Game ID: ");
+                    System.out.print(game.gameID());
+                    System.out.print(". White User: ");
+                    System.out.print(game.whiteUsername());
+                    System.out.print(". Black User: ");
+                    System.out.print(game.blackUsername());
+                    System.out.print(". Game Name: ");
+                    System.out.println(game.gameName());
+                }
+            }
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 401:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unauthorized.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
         }
     }
 
@@ -128,18 +262,6 @@ public class PostLogin {
         out.print("help");
         out.print(SET_TEXT_COLOR_LIGHT_GREY);
         out.println(" - with possible commands");
-    }
-
-    private void create(String[] parameters) throws ResponseException {
-        if (parameters.length != 2) {
-            out.print(SET_TEXT_COLOR_RED);
-            System.out.println("incorrect create commands.");
-        } else {
-            server.createGame(new GameName(parameters[1]));
-            DrawBoard drawBoard = new DrawBoard();
-        }
-
-
     }
 
 }

@@ -49,34 +49,69 @@ public class PreLogin {
         return true;
     }
 
-    private boolean login(String[] parameters) throws ResponseException {
-        if (parameters.length != 3) {
-            out.print(SET_TEXT_COLOR_RED);
-            System.out.println("incorrect login commands.");
+    private boolean login(String[] parameters) {
+        try {
+            if (parameters.length != 3) {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("incorrect login commands.");
+                return true;
+            } else {
+                out.print(SET_TEXT_COLOR_YELLOW);
+                server.login(new UserData(parameters[1], parameters[2], null));
+                System.out.print("logged in as ");
+                System.out.println(parameters[1]);
+                PostLogin postLogin = new PostLogin();
+                return postLogin.determineState();
+            }
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 401:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unauthorized.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
             return true;
-        } else {
-            out.print(SET_TEXT_COLOR_YELLOW);
-            System.out.print("logged in as ");
-            System.out.println(parameters[1]);
-            server.login(new UserData(parameters[1], parameters[2], null));
-            PostLogin postLogin = new PostLogin();
-            return postLogin.determineState();
         }
+
     }
 
     private boolean register(String[] parameters) throws ResponseException {
-        if (parameters.length != 4) {
-            out.print(SET_TEXT_COLOR_RED);
-            System.out.println("incorrect register commands.");
+        try {
+            if (parameters.length != 4) {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("incorrect register commands.");
+                return true;
+            } else {
+                out.print(SET_TEXT_COLOR_YELLOW);
+                server.registerUser(new UserData(parameters[1], parameters[2], parameters[3]));
+                System.out.print("logged in as ");
+                System.out.println(parameters[1]);
+                PostLogin postLogin = new PostLogin();
+                return postLogin.determineState();
+            }
+        } catch (ResponseException e) {
+            switch (e.StatusCode()) {
+                case 400:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Bad request.");
+                    break;
+                case 403:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Username taken.");
+                    break;
+                case 500:
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("Unexpected error.");
+                    break;
+            }
             return true;
-        } else {
-            out.print(SET_TEXT_COLOR_YELLOW);
-            System.out.print("logged in as ");
-            System.out.println(parameters[1]);
-            server.registerUser(new UserData(parameters[1], parameters[2], parameters[3]));
-            PostLogin postLogin = new PostLogin();
-            return postLogin.determineState();
         }
+
+
     }
 
     public void help() {

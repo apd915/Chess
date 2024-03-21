@@ -29,15 +29,17 @@ public class DrawBoard {
         board.resetBoard();
 
         drawX(out);
-        drawY(out);
+        drawYReversed(out);
         drawX(out);
 
         setBlack(out);
         out.println(EMPTY);
 
-        drawX(out);
-        drawYReversed(out);
-        drawX(out);
+        drawXReversed(out);
+        drawY(out);
+        drawXReversed(out);
+
+
 
 
         out.print(SET_BG_COLOR_LIGHT_GREY);
@@ -57,6 +59,19 @@ public class DrawBoard {
         out.println(EMPTY);
     }
 
+    private static void drawXReversed(PrintStream out) {
+
+        setGray(out);
+        out.print("   ");
+        String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+            drawIndX(out, headers[boardCol]);
+        }
+        out.print("   ");
+        setBlack(out);
+        out.println(EMPTY);
+    }
+
     private static void drawIndX(PrintStream out, String headerText) {
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
@@ -67,7 +82,7 @@ public class DrawBoard {
     }
 
     private static void drawY(PrintStream out) {
-        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        String[] headers = {"8", "7", "6", "5", "4", "3", "2", "1"};
         for (int j = 0; j < headers.length; j++) {
             drawIndY(out, headers[j]);
             if ((j % 2 == 0)) {
@@ -87,10 +102,10 @@ public class DrawBoard {
             drawIndY(out, headers[j-1]);
             if ((j % 2 == 1)) {
                 setWhite(out);
-                drawChessBoardRowReversed(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
+                drawChessBoardRowReversed(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
             } else {
                 setBlack(out);
-                drawChessBoardRowReversed(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
+                drawChessBoardRowReversed(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
             }
 
         }
