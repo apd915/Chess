@@ -74,7 +74,7 @@ public class PostLogin {
                 try {
                     int num = Integer.parseInt(parameters[1]);
                     server.joinGame(new JoinGame(null, num));
-                    DrawBoard board = new DrawBoard();
+//                    DrawBoard board = new DrawBoard();
                 } catch (NumberFormatException e) {
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("<ID> field not a number.");
@@ -161,12 +161,17 @@ public class PostLogin {
                     int num = Integer.parseInt(parameters[1]);
                     if (parameters.length == 3) {
                         if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
+                            GameUI gameUI = new GameUI(num, parameters[2]);
                             server.joinGame(new JoinGame(parameters[2], num));
-                            new DrawBoard();
+                            gameUI.determineState();
+
+//                            new DrawBoard();
                         }
                     } else {
+                        GameUI gameUI = new GameUI(num, parameters[2]);
                         server.joinGame(new JoinGame(null, num));
-                        new DrawBoard();
+                        gameUI.determineState();
+//                        new DrawBoard();
                     }
 
                 } catch (NumberFormatException e) {

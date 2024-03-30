@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import gameModels.*;
 import model.AuthData;
 import model.UserData;
+import ui.ServerMessageObserver;
 
 import java.io.*;
 import java.net.*;
@@ -12,10 +13,12 @@ import java.net.*;
 public class ServerFacade {
 
     private final String serverUrl;
+    ServerMessageObserver serverMessageObserver;
     // URL
 
-    public ServerFacade(String url) {
+    public ServerFacade(String url, ServerMessageObserver handler) {
         serverUrl = url;
+        serverMessageObserver = handler;
     }
     public ServerFacade() {
         this.serverUrl = "http://localhost:8080";

@@ -31,7 +31,7 @@ public class ServerFacadeTests {
 
     @Test
     public void successfulRegister() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         AuthData data = server.registerUser(new UserData("hi", "me", "123"));
         Assertions.assertTrue(true);
 //        Assertions.assertNotNull(data.authToken());
@@ -39,7 +39,7 @@ public class ServerFacadeTests {
 
     @Test
     public void failedRegister() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
 //        AuthData data = server.registerUser(new UserData("me", "123", "123"));
         // already created user
         Assertions.assertThrows(ResponseException.class, () -> server.registerUser(new UserData("me", "123", "123")));
@@ -47,7 +47,7 @@ public class ServerFacadeTests {
 
     @Test
     public void successfulLogin() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
 //        server.registerUser(new UserData("apd", "me", "123"));
         AuthData data = server.login(new UserData("apd", "me", "123"));
         Assertions.assertNotNull(data.authToken());
@@ -55,14 +55,14 @@ public class ServerFacadeTests {
 
     @Test
     public void failedLogin() {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         // right user, wrong password
         Assertions.assertThrows(ResponseException.class, () -> server.login(new UserData("apd915", "123", "123")));
     }
 
     @Test
     public void successfulLogout() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         AuthData data = server.login(new UserData("me", "me", "123"));
         Object logout = server.logout();
         Assertions.assertNull(logout);
@@ -70,7 +70,7 @@ public class ServerFacadeTests {
 
     @Test
     public void failedLogout() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         server.login(new UserData("me", "me", "123"));
         server.logout();
         // no login
@@ -79,7 +79,7 @@ public class ServerFacadeTests {
 
     @Test
     public void successfulList() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         server.login(new UserData("me", "me", "123"));
         GameID game = server.createGame(new GameName("NewGame"));
 //        server.login(new UserData("me", "me", "123"));
@@ -89,7 +89,7 @@ public class ServerFacadeTests {
 
     @Test
     public void failedList() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         server.registerUser(new UserData("apd", "me", "123"));
         AuthData data = server.login(new UserData("apd", "me", "123"));
         server.logout();
@@ -99,7 +99,7 @@ public class ServerFacadeTests {
 
     @Test
     public void successfulCreate() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         server.login(new UserData("me", "me", "123"));
         GameID game = server.createGame(new GameName("NewGame2"));
         Assertions.assertInstanceOf(GameID.class, game);
@@ -107,7 +107,7 @@ public class ServerFacadeTests {
 
     @Test
     public void failedCreate() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         // no login
         server.login(new UserData("me", "me", "123"));
         server.logout();
@@ -116,7 +116,7 @@ public class ServerFacadeTests {
 
     @Test
     public void successfulJoin() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         server.registerUser(new UserData("me", "me", "123"));
         server.login(new UserData("me", "me", "123"));
         GameID game = server.createGame(new GameName("joinGame5"));
@@ -126,7 +126,7 @@ public class ServerFacadeTests {
 
     @Test
     public void failedJoin() throws ResponseException {
-        ServerFacade server = new ServerFacade(url);
+        ServerFacade server = new ServerFacade(url, null);
         server.registerUser(new UserData("hello", "me", "123"));
         server.login(new UserData("hello", "me", "123"));
         GameID game = server.createGame(new GameName("joinGame5"));

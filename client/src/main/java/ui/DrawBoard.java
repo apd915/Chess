@@ -21,36 +21,37 @@ public class DrawBoard {
     private static Random rand = new Random();
 
 
-    public DrawBoard() {
+    public DrawBoard(String playerColor) {
+
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
 //        out.print(ERASE_SCREEN);
 
         board.resetBoard();
 
-        drawX(out);
-        drawYReversed(out);
-        drawX(out);
+        if (Objects.equals(playerColor, "BLACK")) {
+            drawXBlack(out);
+            drawYBlack(out);
+            drawXBlack(out);
+        } else {
+            drawXWhite(out);
+            drawYWhite(out);
+            drawXWhite(out);
+        }
 
-        setBlack(out);
-        out.println(EMPTY);
-
-        drawXReversed(out);
-        drawY(out);
-        drawXReversed(out);
-
-
+//        setBlack(out);
+//        out.println(EMPTY);
 
 
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawX(PrintStream out) {
+    private static void drawXWhite(PrintStream out) {
 
         setGray(out);
         out.print("   ");
-        String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
+        String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             drawIndX(out, headers[boardCol]);
         }
@@ -59,11 +60,11 @@ public class DrawBoard {
         out.println(EMPTY);
     }
 
-    private static void drawXReversed(PrintStream out) {
+    private static void drawXBlack(PrintStream out) {
 
         setGray(out);
         out.print("   ");
-        String[] headers = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        String[] headers = {"h", "g", "f", "e", "d", "c", "b", "a"};
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             drawIndX(out, headers[boardCol]);
         }
@@ -81,31 +82,31 @@ public class DrawBoard {
 
     }
 
-    private static void drawY(PrintStream out) {
-        String[] headers = {"8", "7", "6", "5", "4", "3", "2", "1"};
+    private static void drawYBlack(PrintStream out) {
+        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
         for (int j = 0; j < headers.length; j++) {
             drawIndY(out, headers[j]);
             if ((j % 2 == 0)) {
                 setWhite(out);
-                drawChessBoardRow(out, j + 1, SET_BG_COLOR_LIGHT_GREY, headers[j]);
+                drawChessBoardRowBlack(out, j + 1, SET_BG_COLOR_LIGHT_GREY, headers[j]);
             } else {
                 setBlack(out);
-                drawChessBoardRow(out, j + 1, SET_BG_COLOR_DARK_GREEN, headers[j]);
+                drawChessBoardRowBlack(out, j + 1, SET_BG_COLOR_DARK_GREEN, headers[j]);
             }
 
         }
     }
 
-    private static void drawYReversed(PrintStream out) {
-        String[] headers = {"8", "7", "6", "5", "4", "3", "2", "1"};
+    private static void drawYWhite(PrintStream out) {
+        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
         for (int j = 8; j > 0; j--) {
             drawIndY(out, headers[j-1]);
             if ((j % 2 == 1)) {
                 setWhite(out);
-                drawChessBoardRowReversed(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
+                drawChessBoardRowWhite(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
             } else {
                 setBlack(out);
-                drawChessBoardRowReversed(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
+                drawChessBoardRowWhite(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
             }
 
         }
@@ -119,7 +120,7 @@ public class DrawBoard {
         out.print(" ");
     }
 
-    private static void drawChessBoardRow(PrintStream out, int index, String color, String header) {
+    private static void drawChessBoardRowBlack(PrintStream out, int index, String color, String header) {
         int squareColor = 0;
         if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
             squareColor = 0;
@@ -127,14 +128,14 @@ public class DrawBoard {
         if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
             squareColor = 1;
         }
-        for (int i = 0; i < 8; i++) {
+        for (int i = 8; i > 0; i--) {
             if (squareColor == 0) {
                 out.print(SET_BG_COLOR_LIGHT_GREY);
             }
             if (squareColor == 1) {
                 out.print(SET_BG_COLOR_DARK_GREEN);
             }
-            ChessPiece piece = board.getPiece(new ChessPosition(index, i + 1));
+            ChessPiece piece = board.getPiece(new ChessPosition(index, i));
             if (piece != null) {
                 squareColor = printPiece(piece, out, squareColor);
             } else {
@@ -148,7 +149,7 @@ public class DrawBoard {
         out.println(EMPTY);
     }
 
-    private static void drawChessBoardRowReversed(PrintStream out, int index, String color, String header) {
+    private static void drawChessBoardRowWhite(PrintStream out, int index, String color, String header) {
         int squareColor = 0;
         if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
             squareColor = 0;
@@ -156,7 +157,7 @@ public class DrawBoard {
         if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
             squareColor = 1;
         }
-        for (int i = 8; i > 0; i--) {
+        for (int i = 1; i < 9; i++) {
             if (squareColor == 0) {
                 out.print(SET_BG_COLOR_LIGHT_GREY);
             }

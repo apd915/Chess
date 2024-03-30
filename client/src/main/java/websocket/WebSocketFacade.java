@@ -2,8 +2,10 @@ package websocket;
 
 import com.google.gson.Gson;
 import ResponseException.ResponseException;
+import ui.ServerMessageObserver;
 import webSocketMessages.Action;
 import webSocketMessages.Notification;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -14,14 +16,14 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    NotificationHandler notificationHandler;
+    ServerMessageObserver serverMessageObserver;
 
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
+    public WebSocketFacade(String url, ServerMessageObserver serverMessageObserver) throws ResponseException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/connect");
-            this.notificationHandler = notificationHandler;
+            this.serverMessageObserver = serverMessageObserver;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -30,8 +32,8 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    Notification notification = new Gson().fromJson(message, Notification.class);
-                    notificationHandler.notify(notification);
+                    ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
+                    serverMessageObserver.notify(serverMessage);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
