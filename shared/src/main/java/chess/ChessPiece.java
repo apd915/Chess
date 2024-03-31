@@ -39,6 +39,12 @@ public class ChessPiece {
     public ChessGame.TeamColor getTeamColor() {
         return color;
     }
+    public String teamColorString(ChessGame.TeamColor color) {
+        if (color == ChessGame.TeamColor.WHITE) {
+            return "WHITE";
+        }
+        return "BLACK";
+    }
 
     /**
      * @return which type of chess piece this piece is

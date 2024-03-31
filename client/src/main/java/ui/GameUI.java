@@ -1,7 +1,10 @@
 package ui;
 
 import ResponseException.ResponseException;
+import chess.ChessBoard;
 import server.ServerFacade;
+import ui.drawGame.DrawBoard;
+import ui.drawGame.HighLightHelper;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.PrintStream;
@@ -22,6 +25,8 @@ public class GameUI implements ServerMessageObserver {
         this.gameID = gameID;
         this.playerColor = playerColor;
     }
+
+    DrawBoard drawBoard = new DrawBoard(playerColor);
 
     public void determineState() throws ResponseException {
         boolean gameLoop = true;
@@ -80,7 +85,7 @@ public class GameUI implements ServerMessageObserver {
                         System.out.println("invalid coordinates.");
                         break;
                     }
-                    highlightMoves();
+                    highlightMoves(parameters[1]);
                     break;
                 default:
                     wrongCommand();
@@ -93,7 +98,17 @@ public class GameUI implements ServerMessageObserver {
         System.out.println("can't recognize command.");
     }
 
-    private void highlightMoves() {
+    private void highlightMoves(String coordinate) {
+        HighLightHelper helper = new HighLightHelper();
+        if (!helper.colorChecker(coordinate, drawBoard.getBoard(), playerColor)) {
+            out.print(SET_TEXT_COLOR_RED);
+            System.out.println("piece is blank or not of user's color.");
+        } else {
+
+        }
+
+
+
     }
 
     private void resign() {
@@ -104,7 +119,7 @@ public class GameUI implements ServerMessageObserver {
     }
 
     private void redraw() {
-        new DrawBoard(playerColor);
+        DrawBoard.drawInitial();
     }
 
     private void help() {
