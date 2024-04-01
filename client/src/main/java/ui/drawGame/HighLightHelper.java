@@ -5,8 +5,7 @@ import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 public class HighLightHelper {
     public HighLightHelper() {}
@@ -45,13 +44,28 @@ public class HighLightHelper {
         return 0;
     }
 
-    public static void selectColors(String coordinate, ChessBoard board) {
+    public static void selectMoves(String coordinate, ChessBoard board, String color) {
         int row = determineRow(coordinate.charAt(0));
         int col = Integer.parseInt(String.valueOf(coordinate.charAt(1)));
+        HashMap<Integer, List<Integer>> movePositions = null;
+
         ChessPosition position = new ChessPosition(row, col);
         ChessPiece piece = board.getPiece(position);
         Collection<ChessMove> moves = piece.pieceMoves(board, position);
 
+        for (ChessMove move : moves) {
+            ChessPosition endPosition = move.getEndPosition();
+            if (movePositions.containsKey(endPosition.getRow())) {
+                movePositions.get(endPosition.getRow()).add(endPosition.getColumn());
+            } else {
+                movePositions.put(1, new ArrayList<>());
+                movePositions.get(endPosition.getRow()).add(endPosition.getColumn());
+            }
+        }
+        new DrawBoard(color);
+        DrawBoard.highlight(movePositions);
+
     }
+
 
 }

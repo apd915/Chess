@@ -1,11 +1,12 @@
 package ui.drawGame;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import static ui.EscapeSequences.*;
@@ -251,6 +252,61 @@ public class DrawBoard {
         return 0;
     }
 
+    public static void highlight(HashMap<Integer, List<Integer>> movePositions) {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(ERASE_SCREEN);
+
+        drawXWhite(out);
+        highlightYWhite(out);
+        drawXWhite(out);
+
+
+    }
+
+    private static void highlightYWhite(PrintStream out) {
+        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        for (int j = 8; j > 0; j--) {
+            drawIndY(out, headers[j-1]);
+            if ((j % 2 == 1)) {
+                setWhite(out);
+                highlightBoardRowWhite(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
+            } else {
+                setBlack(out);
+                highlightBoardRowWhite(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
+            }
+
+        }
+    }
+
+    private static void highlightBoardRowWhite(PrintStream out, int index, String color, String header) {
+        int squareColor = 0;
+        if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
+            squareColor = 0;
+        }
+        if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
+            squareColor = 1;
+        }
+        for (int i = 1; i < 9; i++) {
+            if (squareColor == 0) {
+                out.print(SET_BG_COLOR_LIGHT_GREY);
+            }
+            if (squareColor == 1) {
+                out.print(SET_BG_COLOR_DARK_GREEN);
+            }
+            ChessPiece piece = board.getPiece(new ChessPosition(index+1, i));
+            if (piece != null) {
+                squareColor = printPiece(piece, out, squareColor);
+            } else {
+                out.print(EMPTY);
+                if (squareColor == 0) squareColor = 1;
+                else squareColor = 0;
+            }
+        }
+        drawIndY(out, header);
+        setBlack(out);
+        out.println(EMPTY);
+    }
+
 
     public ChessBoard getBoard() {
         return board;
@@ -271,6 +327,7 @@ public class DrawBoard {
         out.print(SET_BG_COLOR_DARK_GREY);
         out.print(SET_BG_COLOR_DARK_GREY);
     }
+
 
 
 }
