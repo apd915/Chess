@@ -22,14 +22,14 @@ public class DrawBoard {
         DrawBoard.playerColor = playerColor;
     }
 
-    public static void drawInitial() {
+    public static void drawInitial(String color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         out.print(ERASE_SCREEN);
 
         board.resetBoard();
 
-        if (Objects.equals(playerColor, "BLACK")) {
+        if (Objects.equals(color, "BLACK")) {
             drawXBlack(out);
             drawYBlack(out);
             drawXBlack(out);
@@ -252,33 +252,93 @@ public class DrawBoard {
         return 0;
     }
 
-    public static void highlight(HashMap<Integer, List<Integer>> movePositions) {
+    public static void highlight(HashMap<Integer, List<Integer>> movePositions, String color) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
 
-        drawXWhite(out);
-        highlightYWhite(out);
-        drawXWhite(out);
-
+        if (Objects.equals(color, "BLACK")) {
+            drawXBlack(out);
+            highlightYBlack(out, movePositions);
+            drawXBlack(out);
+        } else {
+            drawXWhite(out);
+            highlightYWhite(out, movePositions);
+            drawXWhite(out);
+        }
 
     }
 
-    private static void highlightYWhite(PrintStream out) {
+    private static void highlightYBlack(PrintStream out, HashMap<Integer, List<Integer>> movePositions) {
         String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        for (int j = 8; j > 0; j--) {
-            drawIndY(out, headers[j-1]);
-            if ((j % 2 == 1)) {
+        for (int j = 0; j < headers.length; j++) {
+            drawIndY(out, headers[j]);
+            if ((j % 2 == 0)) {
                 setWhite(out);
-                highlightBoardRowWhite(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
+                highlightBoardRowBlack(out, j + 1, SET_BG_COLOR_LIGHT_GREY, headers[j], movePositions);
             } else {
                 setBlack(out);
-                highlightBoardRowWhite(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
+                highlightBoardRowBlack(out, j + 1, SET_BG_COLOR_DARK_GREEN, headers[j], movePositions);
             }
 
         }
     }
 
-    private static void highlightBoardRowWhite(PrintStream out, int index, String color, String header) {
+    private static void highlightYWhite(PrintStream out, HashMap<Integer, List<Integer>> movePositions) {
+        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        for (int j = 8; j > 0; j--) {
+            drawIndY(out, headers[j-1]);
+            if ((j % 2 == 1)) {
+                setWhite(out);
+                highlightBoardRowWhite(out, j-1, SET_BG_COLOR_DARK_GREEN, headers[j-1], movePositions);
+            } else {
+                setBlack(out);
+                highlightBoardRowWhite(out, j-1, SET_BG_COLOR_LIGHT_GREY, headers[j-1], movePositions);
+            }
+
+        }
+    }
+
+    private static void highlightBoardRowBlack(PrintStream out, int index, String color, String header, HashMap<Integer, List<Integer>> movePositions) {
+        int squareColor = 0;
+        if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
+            squareColor = 0;
+        }
+        if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
+            squareColor = 1;
+        }
+        for (int i = 8; i > 0; i--) {
+            int j = fixIndex(i);
+            if (squareColor == 0) {
+                out.print(SET_BG_COLOR_LIGHT_GREY);
+            }
+            if (squareColor == 1) {
+                out.print(SET_BG_COLOR_DARK_GREEN);
+            }
+            if (movePositions.get(index) != null) {
+                if (movePositions.get(index).contains(j)) {
+                    if (squareColor == 0) {
+                        out.print(SET_BG_COLOR_MAGENTA);
+                    } else {
+                        out.print(SET_BG_COLOR_BLUE);
+                    }
+                }
+            }
+
+            ChessPiece piece = board.getPiece(new ChessPosition(index, i));
+            if (piece != null) {
+                squareColor = printPiece(piece, out, squareColor);
+            } else {
+                out.print(EMPTY);
+                if (squareColor == 0) squareColor = 1;
+                else squareColor = 0;
+            }
+        }
+        drawIndY(out, header);
+        setBlack(out);
+        out.println(EMPTY);
+    }
+
+    private static void highlightBoardRowWhite(PrintStream out, int index, String color, String header, HashMap<Integer, List<Integer>> movePositions) {
         int squareColor = 0;
         if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
             squareColor = 0;
@@ -287,12 +347,23 @@ public class DrawBoard {
             squareColor = 1;
         }
         for (int i = 1; i < 9; i++) {
+            int j = fixIndex(i);
             if (squareColor == 0) {
                 out.print(SET_BG_COLOR_LIGHT_GREY);
             }
             if (squareColor == 1) {
                 out.print(SET_BG_COLOR_DARK_GREEN);
             }
+            if (movePositions.get(index+1) != null) {
+                if (movePositions.get(index+1).contains(j)) {
+                    if (squareColor == 0) {
+                        out.print(SET_BG_COLOR_MAGENTA);
+                    } else {
+                        out.print(SET_BG_COLOR_BLUE);
+                    }
+                }
+            }
+
             ChessPiece piece = board.getPiece(new ChessPosition(index+1, i));
             if (piece != null) {
                 squareColor = printPiece(piece, out, squareColor);
@@ -307,7 +378,19 @@ public class DrawBoard {
         out.println(EMPTY);
     }
 
-
+    private static int fixIndex(int i) {
+        return switch (i) {
+            case 8 -> 1;
+            case 7 -> 2;
+            case 6 -> 3;
+            case 5 -> 4;
+            case 4 -> 5;
+            case 3 -> 6;
+            case 2 -> 7;
+            case 1 -> 8;
+            default -> 0;
+        };
+    }
     public ChessBoard getBoard() {
         return board;
     }

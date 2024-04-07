@@ -4,6 +4,7 @@ import ResponseException.ResponseException;
 import com.google.gson.JsonObject;
 import gameModels.*;
 import server.ServerFacade;
+import ui.drawGame.DrawBoard;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -163,13 +164,17 @@ public class PostLogin {
                         if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
                             GameUI gameUI = new GameUI(num, parameters[2]);
                             server.joinGame(new JoinGame(parameters[2], num));
+                            new DrawBoard(parameters[2]);
+                            DrawBoard.drawInitial(parameters[2]);
                             gameUI.determineState();
 
 //                            new DrawBoard();
                         }
                     } else {
-                        GameUI gameUI = new GameUI(num, parameters[2]);
+                        GameUI gameUI = new GameUI(num, null);
                         server.joinGame(new JoinGame(null, num));
+                        new DrawBoard(null);
+                        DrawBoard.drawInitial("WHITE");
                         gameUI.determineState();
 //                        new DrawBoard();
                     }

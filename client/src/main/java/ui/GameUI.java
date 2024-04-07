@@ -104,7 +104,7 @@ public class GameUI implements ServerMessageObserver {
             out.print(SET_TEXT_COLOR_RED);
             System.out.println("piece is blank or not of user's color.");
         } else {
-
+            HighLightHelper.selectMoves(coordinate, drawBoard.getBoard(), playerColor);
         }
 
 
@@ -119,7 +119,7 @@ public class GameUI implements ServerMessageObserver {
     }
 
     private void redraw() {
-        DrawBoard.drawInitial();
+        drawBoard.drawInitial(playerColor);
     }
 
     private void help() {

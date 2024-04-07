@@ -11,8 +11,8 @@ public class HighLightHelper {
     public HighLightHelper() {}
 
     public boolean colorChecker(String coordinate, ChessBoard board, String color) {
-        int row = determineRow(coordinate.charAt(0));
-        int col = Integer.parseInt(String.valueOf(coordinate.charAt(1)));
+        int row = Integer.parseInt(String.valueOf(coordinate.charAt(1)));
+        int col = determineCol(coordinate.charAt(0));
         ChessPiece piece = board.getPiece(new ChessPosition(row, col));
 
         if (piece == null ) {
@@ -22,32 +22,32 @@ public class HighLightHelper {
         return Objects.equals(piece.teamColorString(piece.getTeamColor()), color);
     }
 
-    private static int determineRow(char letter) {
+    private static int determineCol(char letter) {
         switch (letter) {
             case 'a':
-                return 1;
-            case 'b':
-                return 2;
-            case 'c':
-                return 3;
-            case 'd':
-                return 4;
-            case 'e':
-                return 5;
-            case 'f':
-                return 6;
-            case 'g':
-                return 7;
-            case 'h':
                 return 8;
+            case 'b':
+                return 7;
+            case 'c':
+                return 6;
+            case 'd':
+                return 5;
+            case 'e':
+                return 4;
+            case 'f':
+                return 3;
+            case 'g':
+                return 2;
+            case 'h':
+                return 1;
         }
         return 0;
     }
 
     public static void selectMoves(String coordinate, ChessBoard board, String color) {
-        int row = determineRow(coordinate.charAt(0));
-        int col = Integer.parseInt(String.valueOf(coordinate.charAt(1)));
-        HashMap<Integer, List<Integer>> movePositions = null;
+        int row = Integer.parseInt(String.valueOf(coordinate.charAt(1)));
+        int col = determineCol(coordinate.charAt(0));
+        HashMap<Integer, List<Integer>> movePositions = new HashMap<>();
 
         ChessPosition position = new ChessPosition(row, col);
         ChessPiece piece = board.getPiece(position);
@@ -58,13 +58,12 @@ public class HighLightHelper {
             if (movePositions.containsKey(endPosition.getRow())) {
                 movePositions.get(endPosition.getRow()).add(endPosition.getColumn());
             } else {
-                movePositions.put(1, new ArrayList<>());
+                movePositions.put(endPosition.getRow(), new ArrayList<>());
                 movePositions.get(endPosition.getRow()).add(endPosition.getColumn());
             }
         }
         new DrawBoard(color);
-        DrawBoard.highlight(movePositions);
-
+        DrawBoard.highlight(movePositions, color);
     }
 
 
