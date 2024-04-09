@@ -1,11 +1,9 @@
 import ResponseException.ResponseException;
 import chess.*;
 import ui.PreLogin;
-import ui.State;
 
 public class Main {
 
-    static State state = State.SIGNEDOUT;
     public static void main(String[] args) throws ResponseException {
         System.out.println("Cheese");
         PreLogin preLogin = new PreLogin();
