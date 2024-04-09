@@ -132,8 +132,11 @@ public class GameUI implements ServerMessageObserver {
                 if (helper.determineEndMove(coordinateTo, moves)) {
                     ChessPosition start = helper.coordinateConverter(coordinateFrom);
                     ChessPosition end = helper.coordinateConverter(coordinateTo);
+
+                    //
                     game.makeMove(new ChessMove(start, end, null));
                     DrawBoard.drawMove(game.getBoard(), playerColor);
+                    //
                 } else {
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("invalid move.");
