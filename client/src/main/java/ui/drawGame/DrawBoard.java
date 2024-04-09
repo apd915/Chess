@@ -14,7 +14,7 @@ import static ui.EscapeSequences.*;
 public class DrawBoard {
 
     private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final ChessBoard board = new ChessBoard();
+    private static ChessBoard board = new ChessBoard();
     private static String playerColor;
 
 
@@ -42,6 +42,30 @@ public class DrawBoard {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_WHITE);
     }
+
+    public static void drawMove(ChessBoard newBoard, String color) {
+        board = newBoard;
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+
+        out.print(ERASE_SCREEN);
+
+        board = newBoard;
+
+        if (Objects.equals(color, "BLACK")) {
+            drawXBlack(out);
+            drawYBlack(out);
+            drawXBlack(out);
+        } else {
+            drawXWhite(out);
+            drawYWhite(out);
+//            drawMoveYWhite(out);
+            drawXWhite(out);
+        }
+
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
 
     private static void drawXWhite(PrintStream out) {
 
@@ -108,6 +132,21 @@ public class DrawBoard {
         }
     }
 
+    private static void drawMoveYWhite(PrintStream out) {
+        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        for (int j = 8; j > 0; j--) {
+            drawIndY(out, headers[j-1]);
+            if ((j % 2 == 1)) {
+                setWhite(out);
+                drawMoveRowWhite(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
+            } else {
+                setBlack(out);
+                drawMoveRowWhite(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
+            }
+
+        }
+    }
+
     private static void drawIndY(PrintStream out, String headerText) {
         setGray(out);
         out.print(" ");
@@ -154,6 +193,37 @@ public class DrawBoard {
             squareColor = 1;
         }
         for (int i = 1; i < 9; i++) {
+
+            if (squareColor == 0) {
+                out.print(SET_BG_COLOR_LIGHT_GREY);
+            }
+            if (squareColor == 1) {
+                out.print(SET_BG_COLOR_DARK_GREEN);
+            }
+            ChessPiece piece = board.getPiece(new ChessPosition(index+1, i));
+            if (piece != null) {
+                squareColor = printPiece(piece, out, squareColor);
+            } else {
+                out.print(EMPTY);
+                if (squareColor == 0) squareColor = 1;
+                else squareColor = 0;
+            }
+        }
+        drawIndY(out, header);
+        setBlack(out);
+        out.println(EMPTY);
+    }
+
+    private static void drawMoveRowWhite(PrintStream out, int index, String color, String header) {
+        int squareColor = 0;
+        if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
+            squareColor = 0;
+        }
+        if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
+            squareColor = 1;
+        }
+        for (int i = 8; i > 0; i--) {
+
             if (squareColor == 0) {
                 out.print(SET_BG_COLOR_LIGHT_GREY);
             }

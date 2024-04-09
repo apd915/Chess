@@ -1,6 +1,7 @@
 package ui;
 
 import ResponseException.ResponseException;
+import chess.ChessGame;
 import com.google.gson.JsonObject;
 import gameModels.*;
 import server.ServerFacade;
@@ -17,6 +18,8 @@ public class PostLogin {
 
     PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     ServerFacade server = new ServerFacade();
+
+    ChessGame game = new ChessGame();
 
     public PostLogin() {
     }
@@ -133,6 +136,7 @@ public class PostLogin {
                 System.out.println("incorrect create commands.");
             } else {
                 GameID gameID = server.createGame(new GameName(parameters[1]));
+                game.getBoard().resetBoard();
                 out.print(SET_TEXT_COLOR_YELLOW);
                 System.out.print("Your assigned ID is: ");
                 System.out.println(gameID.gameID());
@@ -162,19 +166,21 @@ public class PostLogin {
                     int num = Integer.parseInt(parameters[1]);
                     if (parameters.length == 3) {
                         if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
-                            GameUI gameUI = new GameUI(num, parameters[2]);
+                            GameUI gameUI = new GameUI(num, parameters[2], game);
                             server.joinGame(new JoinGame(parameters[2], num));
                             new DrawBoard(parameters[2]);
-                            DrawBoard.drawInitial(parameters[2]);
+//                            DrawBoard.drawInitial(parameters[2]);
+                            DrawBoard.drawMove(game.getBoard(), parameters[2]);
                             gameUI.determineState();
 
 //                            new DrawBoard();
                         }
                     } else {
-                        GameUI gameUI = new GameUI(num, null);
+                        GameUI gameUI = new GameUI(num, null, game);
                         server.joinGame(new JoinGame(null, num));
                         new DrawBoard(null);
-                        DrawBoard.drawInitial("WHITE");
+                        DrawBoard.drawMove(game.getBoard(), "WHITE");
+//                        DrawBoard.drawInitial("WHITE");
                         gameUI.determineState();
 //                        new DrawBoard();
                     }

@@ -1,10 +1,11 @@
 package ui;
 
 import ResponseException.ResponseException;
-import chess.ChessBoard;
+import chess.*;
 import server.ServerFacade;
 import ui.drawGame.DrawBoard;
 import ui.drawGame.HighLightHelper;
+import ui.drawGame.MoveHelper;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.io.PrintStream;
@@ -21,9 +22,14 @@ public class GameUI implements ServerMessageObserver {
     int gameID;
     String playerColor;
 
-    public GameUI(int gameID, String playerColor) {
+    ChessGame game;
+
+    public GameUI(int gameID, String playerColor, ChessGame game) {
         this.gameID = gameID;
         this.playerColor = playerColor;
+        this.game = game;
+//        game = new ChessGame();
+//        game.getBoard().resetBoard();
     }
 
     DrawBoard drawBoard = new DrawBoard(playerColor);
@@ -70,7 +76,7 @@ public class GameUI implements ServerMessageObserver {
                         System.out.println("invalid coordinates.");
                         break;
                     }
-                    makeMove();
+                    makeMove(parameters[1], parameters[2]);
                     break;
                 case "resign":
                     resign();
@@ -114,12 +120,34 @@ public class GameUI implements ServerMessageObserver {
     private void resign() {
     }
 
-    private void makeMove() {
+    private void makeMove(String coordinateFrom, String coordinateTo) {
+        try {
+            MoveHelper helper = new MoveHelper();
+            HighLightHelper highLightHelper = new HighLightHelper();
+            if (!highLightHelper.colorChecker(coordinateFrom, drawBoard.getBoard(), playerColor)) {
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("piece is blank or not of user's color.");
+            } else {
+                Collection<ChessMove> moves = helper.selectMoves(coordinateFrom, drawBoard.getBoard(), playerColor);
+                if (helper.determineEndMove(coordinateTo, moves)) {
+                    ChessPosition start = helper.coordinateConverter(coordinateFrom);
+                    ChessPosition end = helper.coordinateConverter(coordinateTo);
+                    game.makeMove(new ChessMove(start, end, null));
+                    DrawBoard.drawMove(game.getBoard(), playerColor);
+                } else {
+                    out.print(SET_TEXT_COLOR_RED);
+                    System.out.println("invalid move.");
+                }
+            }
+        } catch (InvalidMoveException | NullPointerException e) {
+            out.print(SET_TEXT_COLOR_RED);
+            System.out.println("invalid move.");
+        }
 
     }
 
     private void redraw() {
-        drawBoard.drawInitial(playerColor);
+        drawBoard.drawMove(game.getBoard(), playerColor);
     }
 
     private void help() {

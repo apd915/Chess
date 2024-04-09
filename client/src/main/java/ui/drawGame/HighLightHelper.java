@@ -22,7 +22,7 @@ public class HighLightHelper {
         return Objects.equals(piece.teamColorString(piece.getTeamColor()), color);
     }
 
-    private static int determineCol(char letter) {
+    static int determineCol(char letter) {
         switch (letter) {
             case 'a':
                 return 8;
