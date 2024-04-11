@@ -14,6 +14,8 @@ public class ChessGame {
     ChessBoard board;
     TeamColor currentTeam;
 
+    private static boolean state = true;
+
     public ChessGame() {
         this.board = new ChessBoard();
         this.currentTeam = TeamColor.WHITE;
@@ -90,40 +92,43 @@ public class ChessGame {
         TeamColor teamColor = pieceToMove.getTeamColor();
         Collection<ChessMove> valid = validMoves(startPosition);
 
-        if (pieceToMove == null) {
-            throw new InvalidMoveException("Invalid Move");
-        }
-        if (board.getPiece(startPosition).getTeamColor() != currentTeam) {
-            // can't use move piece if it's opponents
-            throw new InvalidMoveException("Invalid Move");
-        }
+        if (state) {
+            if (pieceToMove == null) {
+                throw new InvalidMoveException("Invalid Move");
+            }
+            if (board.getPiece(startPosition).getTeamColor() != currentTeam) {
+                // can't use move piece if it's opponents
+                throw new InvalidMoveException("Invalid Move");
+            }
 
-        if (valid.contains(move)) {
-            // runs if the move is part of the valid list
-            if (move.getPromotionPiece() != null) {
-                // path if there is a piece at given position
-                switch (move.getPromotionPiece()) {
-                    case ROOK -> {
-                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.ROOK);
+            if (valid.contains(move)) {
+                // runs if the move is part of the valid list
+                if (move.getPromotionPiece() != null) {
+                    // path if there is a piece at given position
+                    switch (move.getPromotionPiece()) {
+                        case ROOK -> {
+                            promotePiece(startPosition, endPosition, teamColor, ChessPiece.PieceType.ROOK);
+                        }
+                        case KNIGHT -> {
+                            promotePiece(startPosition, endPosition, teamColor, ChessPiece.PieceType.KNIGHT);
+                        }
+                        case BISHOP -> {
+                            promotePiece(startPosition, endPosition, teamColor, ChessPiece.PieceType.BISHOP);
+                        }
+                        case QUEEN -> {
+                            promotePiece(startPosition, endPosition, teamColor, ChessPiece.PieceType.QUEEN);
+                        }
                     }
-                    case KNIGHT -> {
-                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.KNIGHT);
-                    }
-                    case BISHOP -> {
-                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.BISHOP);
-                    }
-                    case QUEEN -> {
-                        promotePiece(startPosition, endPosition, teamColor,ChessPiece.PieceType.QUEEN);
-                    }
+                } else {
+                    board.addPiece(endPosition, pieceToMove);
+                    board.addPiece(startPosition, null);
+                    currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
                 }
             } else {
-                board.addPiece(endPosition, pieceToMove);
-                board.addPiece(startPosition, null);
-                currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+                throw new InvalidMoveException("Invalid Move");
             }
-        }
-        else {
-            throw new InvalidMoveException("Invalid Move");
+        } else {
+            throw new InvalidMoveException("Unavailable. Game finished.");
         }
     }
 
@@ -356,6 +361,10 @@ public class ChessGame {
         board.addPiece(endPosition, new ChessPiece(teamColor, promoteTo));
         board.addPiece(startPosition, null);
         currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+    }
+
+    public void endState() {
+        state = false;
     }
 
 }

@@ -1,9 +1,6 @@
 package server;
 
 import dataAccess.*;
-import dataAccess.MemoryDAO.MemoryAuthDAO;
-import dataAccess.MemoryDAO.MemoryGameDAO;
-import dataAccess.MemoryDAO.MemoryUserDAO;
 import dataAccess.SQLDAO.SQLAuthDAO;
 import dataAccess.SQLDAO.SQLGameDAO;
 import dataAccess.SQLDAO.SQLUserDAO;
@@ -28,7 +25,7 @@ public class Server {
 
             Spark.staticFiles.location("web");
 
-//            Spark.webSocket("/connect", webSocketHandler);
+            Spark.webSocket("/connect", WSServer.class);
 
             // Register your endpoints and handle exceptions here.
             Spark.post("/user", new RegistrationHandler(userDAO, authDAO));

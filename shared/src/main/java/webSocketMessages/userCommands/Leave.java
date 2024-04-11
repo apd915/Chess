@@ -6,8 +6,8 @@ public class Leave extends UserGameCommand {
     final String authToken;
     final int gameID;
 
-    public Leave(String authToken, int gameID) {
-        super(authToken);
+    public Leave(String authToken, CommandType commandType, int gameID) {
+        super(authToken, commandType);
 
         this.authToken = authToken;
         this.gameID = gameID;

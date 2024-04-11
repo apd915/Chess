@@ -1,4 +1,4 @@
-package ui;
+package SessionMessages;
 
 import webSocketMessages.serverMessages.ServerMessage;
 

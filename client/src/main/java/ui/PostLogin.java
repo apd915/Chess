@@ -1,12 +1,20 @@
 package ui;
 
 import ResponseException.ResponseException;
+import WebSocket.WSClient;
 import chess.ChessGame;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dataAccess.GameDAO;
+import dataAccess.SQLDAO.SQLGameDAO;
 import gameModels.*;
+import model.GameData;
 import server.ServerFacade;
 import ui.drawGame.DrawBoard;
+import webSocketMessages.serverMessages.Error;
+import webSocketMessages.serverMessages.ServerMessage;
 
+import javax.websocket.Session;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -77,8 +85,17 @@ public class PostLogin {
             } else {
                 try {
                     int num = Integer.parseInt(parameters[1]);
+                    GameUI gameUI = new GameUI(num, null, game, server.getToken());
                     server.joinGame(new JoinGame(null, num));
-//                    DrawBoard board = new DrawBoard();
+                    try {
+                        WSClient ws = new WSClient();
+
+                        ws.observe(server.getToken(), gameUI.gameID);
+                        gameUI.determineState();
+                    } catch (Exception e) {
+                        out.print(SET_TEXT_COLOR_RED);
+                        System.out.println("Unable to join game.");
+                    }
                 } catch (NumberFormatException e) {
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("<ID> field not a number.");
@@ -166,20 +183,28 @@ public class PostLogin {
                     int num = Integer.parseInt(parameters[1]);
                     if (parameters.length == 3) {
                         if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
-                            GameUI gameUI = new GameUI(num, parameters[2], game);
+                            GameUI gameUI = new GameUI(num, parameters[2], game, server.getToken());
                             server.joinGame(new JoinGame(parameters[2], num));
                             new DrawBoard(parameters[2]);
 //                            DrawBoard.drawInitial(parameters[2]);
-                            DrawBoard.drawMove(game.getBoard(), parameters[2]);
-                            gameUI.determineState();
+                            DrawBoard.drawInitial(parameters[2]);
+                            try {
+                                WSClient ws = new WSClient();
 
-//                            new DrawBoard();
+                                ChessGame.TeamColor teamColor = (Objects.equals(parameters[2], "WHITE")) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+                                ws.joinPlayer(server.getToken(), gameUI.gameID, teamColor);
+                                gameUI.determineState();
+                            } catch (Exception e) {
+                                out.print(SET_TEXT_COLOR_RED);
+                                System.out.println("Unable to join game.");
+                            }
+
                         }
                     } else {
-                        GameUI gameUI = new GameUI(num, null, game);
+                        GameUI gameUI = new GameUI(num, null, game, server.getToken());
                         server.joinGame(new JoinGame(null, num));
                         new DrawBoard(null);
-                        DrawBoard.drawMove(game.getBoard(), "WHITE");
+                        DrawBoard.drawInitial("WHITE");
 //                        DrawBoard.drawInitial("WHITE");
                         gameUI.determineState();
 //                        new DrawBoard();

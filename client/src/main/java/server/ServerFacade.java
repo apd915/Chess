@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import gameModels.*;
 import model.AuthData;
 import model.UserData;
-import ui.ServerMessageObserver;
+import SessionMessages.ServerMessageObserver;
 
 import java.io.*;
 import java.net.*;
@@ -27,8 +27,6 @@ public class ServerFacade {
     static String authToken = null;
 
 
-    // Are some of these okay to be "void"?
-    // How to make use of the authToken
     public AuthData registerUser(UserData userData) throws ResponseException {
         var path = "/user";
         AuthData registerResult = this.makeRequest("POST", path, userData, AuthData.class, authToken);
@@ -117,7 +115,19 @@ public class ServerFacade {
     }
 
 
+    /*
+    * WebSocket Facade
+    *
+    * */
+
+
+
+
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    public String getToken() {
+        return authToken;
     }
 }

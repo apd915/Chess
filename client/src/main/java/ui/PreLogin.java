@@ -110,8 +110,6 @@ public class PreLogin {
             }
             return true;
         }
-
-
     }
 
     public void help() {
