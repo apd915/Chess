@@ -65,6 +65,7 @@ public class GameUI implements ServerMessageObserver {
                         break;
                     case "leave":
                         // update gameLoop
+                        leave();
                         gameLoop = false;
                         break;
                     case "make":
@@ -109,6 +110,10 @@ public class GameUI implements ServerMessageObserver {
         }
     }
 
+    private void leave() {
+        webSocket.leave(authToken, gameID);
+    }
+
     private void wrongCommand() {
         out.print(SET_TEXT_COLOR_RED);
         System.out.println("can't recognize command.");
@@ -129,7 +134,6 @@ public class GameUI implements ServerMessageObserver {
     }
 
     private void resign() {
-        game.endState();
         webSocket.resign(authToken, gameID);
     }
 

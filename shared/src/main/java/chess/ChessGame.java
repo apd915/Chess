@@ -363,6 +363,10 @@ public class ChessGame {
         currentTeam = (currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
+
+    public boolean getState() {
+        return state;
+    }
     public void endState() {
         state = false;
     }

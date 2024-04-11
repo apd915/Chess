@@ -80,6 +80,17 @@ public class WSClient extends Endpoint {
         }
     }
 
+    public void leave(String authToken, int gameID) {
+        try {
+            Gson gson = new Gson();
+            Leave leave = new Leave(authToken, UserGameCommand.CommandType.LEAVE, gameID);
+            String message = gson.toJson(leave);
+            send(message);
+        } catch (Exception e) {
+            System.out.println("error: unable to make move.");
+        }
+    }
+
     public void send(String msg) throws Exception {
         this.session.getBasicRemote().sendText(msg);
     }

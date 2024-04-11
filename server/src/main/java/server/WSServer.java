@@ -44,10 +44,46 @@ public class WSServer {
             case JOIN_PLAYER -> joinPlayer(session, message);
             case JOIN_OBSERVER -> joinObserver(session, message);
             case MAKE_MOVE -> makeMoveMessage(session, message);
-//            case LEAVE -> leave(session, message);
+            case LEAVE -> leave(session, message);
             case RESIGN -> resign(session, message);
         }
         System.out.printf("Received: %s", message);
+    }
+
+    private void leave(Session session, String message) throws ResponseException, IOException {
+        Gson gson = new Gson();
+        Leave leave = gson.fromJson(message, Leave.class);
+        String authToken = leave.getAuthString();
+        int gameID = leave.getGameID();
+
+        GameDAO gameDAO = new SQLGameDAO();
+        GameData gameData = gameDAO.getGame(gameID);
+        ChessGame game = gameData.game();
+
+        AuthDAO authDAO = new SQLAuthDAO();
+        AuthData authData = authDAO.getAuth(authToken);
+        String username = authData.username();
+
+
+        if (Objects.equals(username, gameData.whiteUsername())) {
+            gameDAO.updateGame(new GameData(gameID, null, gameData.blackUsername(), gameData.gameName(), game), username, "WHITE");
+        } else if (Objects.equals(username, gameData.blackUsername())) {
+            gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), null, gameData.gameName(), game), username, "BLACK");
+        }
+
+        List<Session> toRemove = new ArrayList<>();
+        List<Session> list = sessions.get(gameID);
+        for (Session client : list) {
+            if (client.isOpen()) {
+                Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has left the game");
+                String gsonMessage = gson.toJson(notification);
+                client.getRemote().sendString(gsonMessage);
+            } else {
+                toRemove.add(client);
+            }
+        }
+        removeSessions(toRemove, gameID);
+
     }
 
     private void resign(Session session, String message) throws ResponseException, IOException {
@@ -64,7 +100,18 @@ public class WSServer {
         AuthData authData = authDAO.getAuth(authToken);
         String username = authData.username();
 
-        if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
+        if (!game.getState()) {
+            List<Session> toRemove = new ArrayList<>();
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error: can't resign twice");
+            String gsonMessage = gson.toJson(error);
+
+            if (session.isOpen()) {
+                session.getRemote().sendString(gsonMessage);
+            } else {
+                toRemove.add(session);
+                removeSessions(toRemove, gameID);
+            }
+        } else if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
             List<Session> toRemove = new ArrayList<>();
             Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error: can't resign as an observer");
             String gsonMessage = gson.toJson(error);
@@ -292,10 +339,7 @@ public class WSServer {
             Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error: unable to move piece.");
             String gsonMessage = gson.toJson(error);
             session.getRemote().sendString(gsonMessage);
-        }
-
-
-        else {
+        } else {
             List<Session> gameUsers = sessions.get(gameID);
             for (Session user : gameUsers) {
                 LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
@@ -311,11 +355,6 @@ public class WSServer {
             }
 
         }
-
-
-
-
-
 
 
     }
