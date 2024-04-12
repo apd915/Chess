@@ -1,10 +1,7 @@
 package server;
 
 import ResponseException.ResponseException;
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import com.google.gson.Gson;
 import dataAccess.AuthDAO;
 import dataAccess.GameDAO;
@@ -303,7 +300,7 @@ public class WSServer {
     }
 
 
-    public void makeMoveMessage(Session session, String message) throws ResponseException, IOException {
+    public void makeMoveMessage(Session session, String message) throws ResponseException, IOException, InvalidMoveException {
         Gson gson = new Gson();
         MakeMove makeMove = gson.fromJson(message, MakeMove.class);
         ChessMove move = makeMove.getMove();
@@ -340,19 +337,34 @@ public class WSServer {
             String gsonMessage = gson.toJson(error);
             session.getRemote().sendString(gsonMessage);
         } else {
+            List<Session> toRemove = new ArrayList<>();
             List<Session> gameUsers = sessions.get(gameID);
+
+            String color;
+            if (Objects.equals(username, gameData.whiteUsername())) {
+                color = "WHITE";
+            } else {
+                color = "BLACK";
+            }
+            game.makeMove(move);
+            gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game), username, color);
             for (Session user : gameUsers) {
-                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
-                String loadMessage = gson.toJson(loadGame);
-                user.getRemote().sendString(loadMessage);
-                if (!Objects.equals(user, session)) {
-                    Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " moved from row: "
-                            + start.getRow() + ", column: " + start.getColumn() + " to row: " + end.getRow()
-                            + ", column: " + end.getColumn());
-                    String gsonMessage = gson.toJson(notification);
-                    user.getRemote().sendString(gsonMessage);
+                if (user.isOpen()) {
+                    LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+                    String loadMessage = gson.toJson(loadGame);
+                    user.getRemote().sendString(loadMessage);
+                    if (!Objects.equals(user, session)) {
+                        Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " moved from row: "
+                                + start.getRow() + ", column: " + start.getColumn() + " to row: " + end.getRow()
+                                + ", column: " + end.getColumn());
+                        String gsonMessage = gson.toJson(notification);
+                        user.getRemote().sendString(gsonMessage);
+                    }
+                } else {
+                    toRemove.add(user);
                 }
             }
+            removeSessions(toRemove, gameID);
 
         }
 

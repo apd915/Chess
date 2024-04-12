@@ -1,9 +1,15 @@
 package WebSocket;
 
+import ResponseException.ResponseException;
 import SessionMessages.MakeMoveMessage;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
+import dataAccess.GameDAO;
+import dataAccess.SQLDAO.SQLGameDAO;
+import model.GameData;
+import ui.drawGame.DrawBoard;
+import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.*;
 
@@ -25,8 +31,31 @@ public class WSClient extends Endpoint {
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             public void onMessage(String message) {
-//                Gson gson = new Gson();
-//                ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
+                Gson gson = new Gson();
+                ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
+                if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+                    LoadGame loadGame = gson.fromJson(message, LoadGame.class);
+                    int gameID = loadGame.getGame();
+
+                    try {
+                        GameDAO gameDAO = new SQLGameDAO();
+                        GameData gameData = gameDAO.getGame(gameID);
+                        ChessGame chessGame = gameData.game();
+                        ChessGame.TeamColor currentTeam = chessGame.getTeamTurn();
+                        String color;
+                        if (currentTeam == ChessGame.TeamColor.WHITE) {
+                            color = "WHITE";
+                        } else if (currentTeam == ChessGame.TeamColor.BLACK) {
+                            color = "BLACK";
+                        } else {
+                            color = "WHITE";
+                        }
+                        System.out.println();
+                        DrawBoard.drawMove(chessGame.getBoard(), color);
+                    } catch (ResponseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 //                switch (serverMessage.getServerMessageType()) {
 //                    case NOTIFICATION -> notification(message);
 //                    case LOAD_GAME -> loadGame(message);

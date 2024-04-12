@@ -185,9 +185,9 @@ public class PostLogin {
                         if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
                             GameUI gameUI = new GameUI(num, parameters[2], game, server.getToken());
                             server.joinGame(new JoinGame(parameters[2], num));
-                            new DrawBoard(parameters[2]);
+//                            new DrawBoard(parameters[2]);
 //                            DrawBoard.drawInitial(parameters[2]);
-                            DrawBoard.drawInitial(parameters[2]);
+//                            DrawBoard.drawInitial(parameters[2]);
                             try {
                                 WSClient ws = new WSClient();
 
