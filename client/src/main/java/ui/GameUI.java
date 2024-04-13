@@ -16,7 +16,7 @@ import java.util.*;
 import static ui.EscapeSequences.*;
 import static ui.EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
 
-public class GameUI implements ServerMessageObserver {
+public class GameUI {
 
     PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
     int gameID;
