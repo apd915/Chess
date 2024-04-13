@@ -17,13 +17,8 @@ import java.util.Objects;
 public class SQLGameDAO implements GameDAO {
 
     public SQLGameDAO() throws ResponseException {
-        try {
-            DatabaseManager.createDatabase();
-            DatabaseManager.getConnection();
-            DatabaseManager.configureDatabase(createStatements);
-        } catch (DataAccessException e) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", e.getMessage()));
-        }
+        InitializeDAO initializeDAO = new InitializeDAO();
+        initializeDAO.initialize(createStatements);
     }
     @Override
     public void createGame(String gameName) {
