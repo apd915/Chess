@@ -212,8 +212,4 @@ public class GameUI implements ServerMessageObserver {
         return numbers.contains(coordinate.charAt(1));
     }
 
-    @Override
-    public void notify(ServerMessage message) {
-
-    }
 }
