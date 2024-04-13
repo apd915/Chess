@@ -109,16 +109,7 @@ public class PostLogin {
                 server.logout();
             }
         } catch (ResponseException e) {
-            switch (e.statusCode()) {
-                case 401:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unauthorized.");
-                    break;
-                case 500:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unexpected error.");
-                    break;
-            }
+            smallerError(e);
         }
     }
 
@@ -215,16 +206,7 @@ public class PostLogin {
                 }
             }
         } catch (ResponseException e) {
-            switch (e.statusCode()) {
-                case 401:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unauthorized.");
-                    break;
-                case 500:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unexpected error.");
-                    break;
-            }
+            smallerError(e);
         }
     }
 
@@ -281,6 +263,18 @@ public class PostLogin {
         }
     }
 
+    private void smallerError(ResponseException e) {
+        switch (e.statusCode()) {
+            case 401:
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("Unauthorized.");
+                break;
+            case 500:
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("Unexpected error.");
+                break;
+        }
+    }
 
 
 }
