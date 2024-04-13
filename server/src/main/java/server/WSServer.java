@@ -304,7 +304,6 @@ public class WSServer {
             playerColor = null;
         }
 
-
         WSMoveHelper moveHelper = new WSMoveHelper();
 
         if (!moveHelper.colorChecker(start, board, playerColor)) {
@@ -338,7 +337,6 @@ public class WSServer {
             } else {
                 color = "BLACK";
             }
-
             try {
                 game.makeMove(move);
                 if (game.isInCheckmate(game.getTeamTurn()) || game.isInStalemate(game.getTeamTurn())) {
@@ -373,8 +371,6 @@ public class WSServer {
                 }
             }
         }
-
-
     }
 
     private void sendMessage(Session session, int gameID, Gson gson, GameData gameData) throws IOException {
