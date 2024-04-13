@@ -2,18 +2,13 @@ package dataAccess.SQLDAO;
 
 import ResponseException.ResponseException;
 import Services.LoginService;
-import com.google.gson.Gson;
 import dataAccess.DataAccessException;
-import ResponseException.ResponseException;
 import dataAccess.DatabaseManager;
 import dataAccess.UserDAO;
 import model.UserData;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLUserDAO  implements UserDAO {
 

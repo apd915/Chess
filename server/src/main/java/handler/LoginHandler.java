@@ -1,7 +1,6 @@
 package handler;
 
 import Services.LoginService;
-import Services.RegistrationService;
 import com.google.gson.Gson;
 import dataAccess.AuthDAO;
 import dataAccess.UserDAO;

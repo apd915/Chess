@@ -1,7 +1,5 @@
 package Response;
 
-import model.AuthData;
-
 public class LogoutResponse {
 
     int responseType;

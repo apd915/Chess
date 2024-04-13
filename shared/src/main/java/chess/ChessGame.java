@@ -18,7 +18,7 @@ public class ChessGame {
 
     public ChessGame() {
         this.board = new ChessBoard();
-//        board.resetBoard();
+        board.resetBoard();
         this.currentTeam = TeamColor.WHITE;
     }
 

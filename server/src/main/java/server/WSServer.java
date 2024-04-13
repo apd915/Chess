@@ -7,15 +7,11 @@ import dataAccess.AuthDAO;
 import dataAccess.GameDAO;
 import dataAccess.SQLDAO.SQLAuthDAO;
 import dataAccess.SQLDAO.SQLGameDAO;
-import dataAccess.SQLDAO.SQLUserDAO;
-import dataAccess.UserDAO;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import server.WSHelper.WSMoveHelper;
-import spark.Spark;
 import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
@@ -32,6 +28,7 @@ import java.util.Objects;
 public class WSServer {
 
     private static HashMap<Integer, List<Session>> sessions = new HashMap<>();
+
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
@@ -72,13 +69,16 @@ public class WSServer {
         List<Session> list = sessions.get(gameID);
         for (Session client : list) {
             if (client.isOpen()) {
-                Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has left the game");
-                String gsonMessage = gson.toJson(notification);
-                client.getRemote().sendString(gsonMessage);
+                if (!Objects.equals(client, session)) {
+                    Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has left the game");
+                    String gsonMessage = gson.toJson(notification);
+                    client.getRemote().sendString(gsonMessage);
+                }
             } else {
                 toRemove.add(client);
             }
         }
+        toRemove.add(session);
         removeSessions(toRemove, gameID);
 
     }
@@ -173,7 +173,7 @@ public class WSServer {
                 List<Session> list = sessions.get(gameID);
                 list.add(session);
 
-                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
                 String loadMessage = gson.toJson(loadGame);
                 if (session.isOpen()) {
                     session.getRemote().sendString(loadMessage);
@@ -189,7 +189,7 @@ public class WSServer {
                 for (Session user : list) {
                     if (user.isOpen()) {
                         if (Objects.equals(user, session)) {
-                            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+                            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
                             String loadMessage = gson.toJson(loadGame);
                             user.getRemote().sendString(loadMessage);
                         }
@@ -255,7 +255,7 @@ public class WSServer {
                 List<Session> list = sessions.get(gameID);
                 list.add(session);
 
-                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
                 String loadMessage = gson.toJson(loadGame);
                 if (session.isOpen()) {
                     session.getRemote().sendString(loadMessage);
@@ -270,7 +270,7 @@ public class WSServer {
                 for (Session user : list) {
                     if (user.isOpen()) {
                         if (Objects.equals(user, session)) {
-                            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+                            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
                             String loadMessage = gson.toJson(loadGame);
                             user.getRemote().sendString(loadMessage);
                         }
@@ -288,9 +288,9 @@ public class WSServer {
                                 String gsonMessage = gson.toJson(error);
                                 user.getRemote().sendString(gsonMessage);
                             }
-                        } else {
-                            toRemove.add(user);
                         }
+                    } else {
+                        toRemove.add(user);
                     }
                 }
                 removeSessions(toRemove, gameID);
@@ -333,9 +333,26 @@ public class WSServer {
         WSMoveHelper moveHelper = new WSMoveHelper();
 
         if (!moveHelper.colorChecker(start, board, playerColor)) {
+            List<Session> toRemove = new ArrayList<>();
             Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error: unable to move piece.");
             String gsonMessage = gson.toJson(error);
-            session.getRemote().sendString(gsonMessage);
+            if (session.isOpen()) {
+                session.getRemote().sendString(gsonMessage);
+            } else {
+                toRemove.add(session);
+                removeSessions(toRemove, gameID);
+            }
+        } else if (!game.getState()) {
+            List<Session> toRemove = new ArrayList<>();
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error: Checkmate or Stalemate.");
+            String gsonMessage = gson.toJson(error);
+
+            if (session.isOpen()) {
+                session.getRemote().sendString(gsonMessage);
+            } else {
+                toRemove.add(session);
+                removeSessions(toRemove, gameID);
+            }
         } else {
             List<Session> toRemove = new ArrayList<>();
             List<Session> gameUsers = sessions.get(gameID);
@@ -347,10 +364,13 @@ public class WSServer {
                 color = "BLACK";
             }
             game.makeMove(move);
+            if (game.isInCheckmate(game.getTeamTurn()) || game.isInStalemate(game.getTeamTurn())) {
+                game.endState();
+            }
             gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game), username, color);
             for (Session user : gameUsers) {
                 if (user.isOpen()) {
-                    LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameID);
+                    LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, game);
                     String loadMessage = gson.toJson(loadGame);
                     user.getRemote().sendString(loadMessage);
                     if (!Objects.equals(user, session)) {
@@ -365,7 +385,6 @@ public class WSServer {
                 }
             }
             removeSessions(toRemove, gameID);
-
         }
 
 

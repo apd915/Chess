@@ -1,7 +1,5 @@
 package Response;
 
-import gameModels.GameID;
-
 public class JoinGameResponse {
     int responseType;
     public JoinGameResponse(int responseType) {

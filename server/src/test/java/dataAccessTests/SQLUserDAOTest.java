@@ -3,14 +3,12 @@ package dataAccessTests;
 import ResponseException.ResponseException;
 import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
-import dataAccess.SQLDAO.SQLAuthDAO;
 import dataAccess.SQLDAO.SQLUserDAO;
 import model.UserData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import spark.utils.Assert;
 
 class SQLUserDAOTest {
 

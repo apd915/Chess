@@ -1,7 +1,6 @@
 package Services;
 
 import Response.JoinGameResponse;
-import Response.ListGamesResponse;
 import dataAccess.AuthDAO;
 import dataAccess.GameDAO;
 import gameModels.JoinGame;

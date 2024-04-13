@@ -1,21 +1,15 @@
 package dataAccessTests;
 
 import ResponseException.ResponseException;
-import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
 import dataAccess.GameDAO;
-import dataAccess.SQLDAO.SQLAuthDAO;
 import dataAccess.SQLDAO.SQLGameDAO;
-import dataAccess.SQLDAO.SQLUserDAO;
 import gameModels.ListGamesInfo;
-import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
 
 import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SQLGameDAOTest {
 

@@ -7,8 +7,6 @@ import model.AuthData;
 import model.UserData;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Objects;
-
 public class LoginService {
 
     public Object login(UserData userData, UserDAO userDAO, AuthDAO authDAO) {

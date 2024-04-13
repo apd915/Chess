@@ -1,10 +1,5 @@
 package ui;
 
-import ResponseException.ResponseException;
-import server.ServerFacade;
-
-import java.util.Arrays;
-
 public class ChessClient {
 //    private String visitorName = null;
 //    private final ServerFacade server;

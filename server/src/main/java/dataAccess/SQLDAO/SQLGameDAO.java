@@ -7,7 +7,6 @@ import dataAccess.DataAccessException;
 import dataAccess.DatabaseManager;
 import dataAccess.GameDAO;
 import gameModels.ListGamesInfo;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.ResultSet;

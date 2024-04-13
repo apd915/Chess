@@ -1,6 +1,5 @@
 package Services;
 
-import Response.LoginResponse;
 import Response.LogoutResponse;
 import dataAccess.AuthDAO;
 import dataAccess.UserDAO;
