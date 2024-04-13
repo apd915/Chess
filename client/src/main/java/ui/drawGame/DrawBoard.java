@@ -132,21 +132,6 @@ public class DrawBoard {
         }
     }
 
-    private static void drawMoveYWhite(PrintStream out) {
-        String[] headers = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        for (int j = 8; j > 0; j--) {
-            drawIndY(out, headers[j-1]);
-            if ((j % 2 == 1)) {
-                setWhite(out);
-                drawMoveRowWhite(out, j - 1, SET_BG_COLOR_DARK_GREEN, headers[j-1]);
-            } else {
-                setBlack(out);
-                drawMoveRowWhite(out, j - 1, SET_BG_COLOR_LIGHT_GREY, headers[j-1]);
-            }
-
-        }
-    }
-
     private static void drawIndY(PrintStream out, String headerText) {
         setGray(out);
         out.print(" ");
@@ -222,6 +207,7 @@ public class DrawBoard {
         if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
             squareColor = 1;
         }
+
         for (int i = 8; i > 0; i--) {
 
             if (squareColor == 0) {
