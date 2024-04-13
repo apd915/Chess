@@ -199,37 +199,6 @@ public class DrawBoard {
         out.println(EMPTY);
     }
 
-    private static void drawMoveRowWhite(PrintStream out, int index, String color, String header) {
-        int squareColor = 0;
-        if (Objects.equals(color, SET_BG_COLOR_LIGHT_GREY)) {
-            squareColor = 0;
-        }
-        if (Objects.equals(color, SET_BG_COLOR_DARK_GREEN)) {
-            squareColor = 1;
-        }
-
-        for (int i = 8; i > 0; i--) {
-
-            if (squareColor == 0) {
-                out.print(SET_BG_COLOR_LIGHT_GREY);
-            }
-            if (squareColor == 1) {
-                out.print(SET_BG_COLOR_DARK_GREEN);
-            }
-            ChessPiece piece = board.getPiece(new ChessPosition(index+1, i));
-            if (piece != null) {
-                squareColor = printPiece(piece, out, squareColor);
-            } else {
-                out.print(EMPTY);
-                if (squareColor == 0) squareColor = 1;
-                else squareColor = 0;
-            }
-        }
-        drawIndY(out, header);
-        setBlack(out);
-        out.println(EMPTY);
-    }
-
     private static int printPiece(ChessPiece piece, PrintStream out, int squareColor) {
         switch (piece.getPieceType()) {
             case ROOK -> {
