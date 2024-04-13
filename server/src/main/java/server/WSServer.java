@@ -168,20 +168,7 @@ public class WSServer {
         } else {
             List<Session> gameUsers = sessions.get(gameID);
             if (gameUsers == null) {
-                List<Session> toRemove = new ArrayList<>();
-                sessions.put(gameID, new ArrayList<>());
-                List<Session> list = sessions.get(gameID);
-                list.add(session);
-
-                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
-                String loadMessage = gson.toJson(loadGame);
-                if (session.isOpen()) {
-                    session.getRemote().sendString(loadMessage);
-                } else {
-                    toRemove.add(session);
-                    removeSessions(toRemove, gameID);
-                }
-
+                sendMessage(session, gameID, gson, gameData);
             } else {
                 List<Session> toRemove = new ArrayList<>();
                 List<Session> list = sessions.get(gameID);
@@ -250,19 +237,7 @@ public class WSServer {
         } else {
             List<Session> gameUsers = sessions.get(gameID);
             if (gameUsers == null) {
-                List<Session> toRemove = new ArrayList<>();
-                sessions.put(gameID, new ArrayList<>());
-                List<Session> list = sessions.get(gameID);
-                list.add(session);
-
-                LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
-                String loadMessage = gson.toJson(loadGame);
-                if (session.isOpen()) {
-                    session.getRemote().sendString(loadMessage);
-                } else {
-                    toRemove.add(session);
-                    removeSessions(toRemove, gameID);
-                }
+                sendMessage(session, gameID, gson, gameData);
             } else {
                 List<Session> toRemove = new ArrayList<>();
                 List<Session> list = sessions.get(gameID);
@@ -388,6 +363,25 @@ public class WSServer {
         }
 
 
+    }
+
+    private void sendMessage(Session session, int gameID, Gson gson, GameData gameData) throws IOException {
+        List<Session> gameUsers = sessions.get(gameID);
+        if (gameUsers == null) {
+            List<Session> toRemove = new ArrayList<>();
+            sessions.put(gameID, new ArrayList<>());
+            List<Session> list = sessions.get(gameID);
+            list.add(session);
+
+            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+            String loadMessage = gson.toJson(loadGame);
+            if (session.isOpen()) {
+                session.getRemote().sendString(loadMessage);
+            } else {
+                toRemove.add(session);
+                removeSessions(toRemove, gameID);
+            }
+        }
     }
 
 
