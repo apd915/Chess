@@ -235,40 +235,40 @@ public class WSServer {
             String gsonMessage = gson.toJson(error);
             session.getRemote().sendString(gsonMessage);
         } else {
-            List<Session> gameUsers = sessions.get(gameID);
-            if (gameUsers == null) {
+            List<Session> clients = sessions.get(gameID);
+            if (clients == null) {
                 sendMessage(session, gameID, gson, gameData);
             } else {
-                List<Session> toRemove = new ArrayList<>();
-                List<Session> list = sessions.get(gameID);
-                list.add(session);
-                for (Session user : list) {
-                    if (user.isOpen()) {
-                        if (Objects.equals(user, session)) {
-                            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
-                            String loadMessage = gson.toJson(loadGame);
-                            user.getRemote().sendString(loadMessage);
+                List<Session> removeSession = new ArrayList<>();
+                List<Session> currentClients = sessions.get(gameID);
+                currentClients.add(session);
+                for (Session client : currentClients) {
+                    if (client.isOpen()) {
+                        if (Objects.equals(client, session)) {
+                            LoadGame gameLoaded = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+                            String sendMessage = gson.toJson(gameLoaded);
+                            client.getRemote().sendString(sendMessage);
                         }
-                        if (!Objects.equals(user, session)) {
+                        if (!Objects.equals(client, session)) {
                             try {
-                                String username = authData.username();
+                                String user = authData.username();
                                 String color = (playerColor == ChessGame.TeamColor.WHITE) ? "WHITE" : "BLACK";
 
 
-                                Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has joined the game as " + color);
+                                Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game as " + color);
                                 String gsonMessage = gson.toJson(notification);
-                                user.getRemote().sendString(gsonMessage);
+                                client.getRemote().sendString(gsonMessage);
                             } catch (Exception e) {
                                 Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error");
                                 String gsonMessage = gson.toJson(error);
-                                user.getRemote().sendString(gsonMessage);
+                                client.getRemote().sendString(gsonMessage);
                             }
                         }
                     } else {
-                        toRemove.add(user);
+                        removeSession.add(client);
                     }
                 }
-                removeSessions(toRemove, gameID);
+                removeSessions(removeSession, gameID);
             }
         }
 
