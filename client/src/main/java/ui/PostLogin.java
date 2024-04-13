@@ -96,24 +96,7 @@ public class PostLogin {
                 }
             }
         } catch (ResponseException e) {
-            switch (e.statusCode()) {
-                case 400:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Bad request.");
-                    break;
-                case 401:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unauthorized.");
-                    break;
-                case 403:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Username taken.");
-                    break;
-                case 500:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unexpected error.");
-                    break;
-            }
+            sendError(e);
         }
     }
 
@@ -208,24 +191,7 @@ public class PostLogin {
                 System.out.println("incorrect join commands.");
             }
         } catch (ResponseException e) {
-            switch (e.statusCode()) {
-                case 400:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Bad request.");
-                    break;
-                case 401:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unauthorized.");
-                    break;
-                case 403:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Username taken.");
-                    break;
-                case 500:
-                    out.print(SET_TEXT_COLOR_RED);
-                    System.out.println("Unexpected error.");
-                    break;
-            }
+            sendError(e);
         }
     }
 
@@ -293,5 +259,28 @@ public class PostLogin {
         out.print(SET_TEXT_COLOR_LIGHT_GREY);
         out.println(" - with possible commands");
     }
+
+    private void sendError(ResponseException e) {
+        switch (e.statusCode()) {
+            case 400:
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("Bad request.");
+                break;
+            case 401:
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("Unauthorized.");
+                break;
+            case 403:
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("Username taken.");
+                break;
+            case 500:
+                out.print(SET_TEXT_COLOR_RED);
+                System.out.println("Unexpected error.");
+                break;
+        }
+    }
+
+
 
 }
