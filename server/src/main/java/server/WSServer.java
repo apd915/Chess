@@ -275,7 +275,7 @@ public class WSServer {
     }
 
 
-    public void makeMoveMessage(Session session, String message) throws ResponseException, IOException, InvalidMoveException {
+    public void makeMoveMessage(Session session, String message) throws ResponseException, IOException {
         Gson gson = new Gson();
         MakeMove makeMove = gson.fromJson(message, MakeMove.class);
         ChessMove move = makeMove.getMove();
@@ -338,28 +338,40 @@ public class WSServer {
             } else {
                 color = "BLACK";
             }
-            game.makeMove(move);
-            if (game.isInCheckmate(game.getTeamTurn()) || game.isInStalemate(game.getTeamTurn())) {
-                game.endState();
-            }
-            gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game), username, color);
-            for (Session user : gameUsers) {
-                if (user.isOpen()) {
-                    LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, game);
-                    String loadMessage = gson.toJson(loadGame);
-                    user.getRemote().sendString(loadMessage);
-                    if (!Objects.equals(user, session)) {
-                        Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " moved from row: "
-                                + start.getRow() + ", column: " + start.getColumn() + " to row: " + end.getRow()
-                                + ", column: " + end.getColumn());
-                        String gsonMessage = gson.toJson(notification);
-                        user.getRemote().sendString(gsonMessage);
+
+            try {
+                game.makeMove(move);
+                if (game.isInCheckmate(game.getTeamTurn()) || game.isInStalemate(game.getTeamTurn())) {
+                    game.endState();
+                }
+                gameDAO.updateGame(new GameData(gameID, gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game), username, color);
+                for (Session user : gameUsers) {
+                    if (user.isOpen()) {
+                        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, game);
+                        String loadMessage = gson.toJson(loadGame);
+                        user.getRemote().sendString(loadMessage);
+                        if (!Objects.equals(user, session)) {
+                            Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " moved from row: "
+                                    + start.getRow() + ", column: " + start.getColumn() + " to row: " + end.getRow()
+                                    + ", column: " + end.getColumn());
+                            String gsonMessage = gson.toJson(notification);
+                            user.getRemote().sendString(gsonMessage);
+                        }
+                    } else {
+                        toRemove.add(user);
                     }
+                }
+                removeSessions(toRemove, gameID);
+            } catch (InvalidMoveException e) {
+                Error error = new Error(ServerMessage.ServerMessageType.ERROR, "Error: unable to move piece.");
+                String gsonMessage = gson.toJson(error);
+                if (session.isOpen()) {
+                    session.getRemote().sendString(gsonMessage);
                 } else {
-                    toRemove.add(user);
+                    toRemove.add(session);
+                    removeSessions(toRemove, gameID);
                 }
             }
-            removeSessions(toRemove, gameID);
         }
 
 

@@ -14,7 +14,7 @@ public class ChessGame {
     ChessBoard board;
     TeamColor currentTeam;
 
-    private static boolean state = true;
+    private boolean state = true;
 
     public ChessGame() {
         this.board = new ChessBoard();
@@ -98,7 +98,7 @@ public class ChessGame {
                 throw new InvalidMoveException("Invalid Move");
             }
             if (board.getPiece(startPosition).getTeamColor() != currentTeam) {
-                // can't use move piece if it's opponents
+                // can't use move piece if it's opponents'
                 throw new InvalidMoveException("Invalid Move");
             }
 

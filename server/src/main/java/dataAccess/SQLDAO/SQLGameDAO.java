@@ -55,21 +55,29 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData updateGame(GameData game, String username, String clientColor) {
+        Gson gson = new Gson();
+        ChessGame chessGame = game.game();
         if (Objects.equals(clientColor, "WHITE")) {
             UpdateTable table = new UpdateTable();
+            String gameJson = gson.toJson(chessGame);
             var statement = "UPDATE game SET whiteUsername = ? WHERE gameID = ?";
+            var gameStatement = "UPDATE game SET game = ? WHERE gameID = ?";
             try {
                 table.executeUpdate(statement, username, game.gameID());
+                table.executeUpdate(gameStatement, gameJson, game.gameID());
                 return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
             } catch (ResponseException e) {
                 throw new RuntimeException(e);
             }
         }
         if (Objects.equals(clientColor, "BLACK")) {
+            String gameJson = gson.toJson(chessGame);
             UpdateTable table = new UpdateTable();
             var statement = "UPDATE game SET blackUsername = ? WHERE gameID = ?";
+            var gameStatement = "UPDATE game SET game = ? WHERE gameID = ?";
             try {
                 table.executeUpdate(statement, username, game.gameID());
+                table.executeUpdate(gameStatement, gameJson, game.gameID());
                 return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
             } catch (ResponseException e) {
                 throw new RuntimeException(e);
