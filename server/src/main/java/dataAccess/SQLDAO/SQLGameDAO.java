@@ -161,28 +161,28 @@ public class SQLGameDAO implements GameDAO {
     }
 
     private ListGamesInfo readGameInfo(ResultSet rs) throws SQLException {
-        String whiteUsername;
-        String blackUsername;
-        String gameName;
-        int gameID = rs.getInt("gameID");
+        String white;
+        String black;
+        String name;
+        int id = rs.getInt("gameID");
         try {
-            whiteUsername = rs.getString("whiteUsername");
+            black = rs.getString("blackUsername");
         }
         catch (SQLException e) {
-            whiteUsername = null;
+            black = null;
         }
         try {
-            blackUsername = rs.getString("blackUsername");
+            white = rs.getString("whiteUsername");
         }
         catch (SQLException e) {
-            blackUsername = null;
+            white = null;
         }
         try {
-            gameName = rs.getString("gameName");        }
+            name = rs.getString("gameName");        }
         catch (SQLException e) {
-            gameName = null;
+            name = null;
         }
-        return new ListGamesInfo(gameID, whiteUsername, blackUsername, gameName);
+        return new ListGamesInfo(id, white, black, name);
     }
 
     private int readID(ResultSet rs) throws SQLException {
