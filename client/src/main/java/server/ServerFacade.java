@@ -76,7 +76,7 @@ public class ServerFacade {
             return readBody(http, responseClass);
         } catch (Exception ex) {
             if (ex instanceof ResponseException) {
-                throw new ResponseException(((ResponseException) ex).StatusCode(), ex.getMessage());
+                throw new ResponseException(((ResponseException) ex).statusCode(), ex.getMessage());
             }
             throw new ResponseException(500, ex.getMessage());
         }

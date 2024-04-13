@@ -96,7 +96,7 @@ public class PostLogin {
                 }
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 400:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Bad request.");
@@ -126,7 +126,7 @@ public class PostLogin {
                 server.logout();
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 401:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Unauthorized.");
@@ -153,7 +153,7 @@ public class PostLogin {
                 System.out.println(gameID.gameID());
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 400:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Bad request.");
@@ -179,9 +179,6 @@ public class PostLogin {
                         if (!Objects.equals(parameters[2], "WHITE") || !Objects.equals(parameters[2], "BLACK")) {
                             GameUI gameUI = new GameUI(num, parameters[2], game, server.getToken());
                             server.joinGame(new JoinGame(parameters[2], num));
-//                            new DrawBoard(parameters[2]);
-//                            DrawBoard.drawInitial(parameters[2]);
-//                            DrawBoard.drawInitial(parameters[2]);
                             try {
                                 WSClient ws = new WSClient();
 
@@ -199,9 +196,7 @@ public class PostLogin {
                         server.joinGame(new JoinGame(null, num));
                         new DrawBoard(null);
                         DrawBoard.drawInitial("WHITE");
-//                        DrawBoard.drawInitial("WHITE");
                         gameUI.determineState();
-//                        new DrawBoard();
                     }
 
                 } catch (NumberFormatException e) {
@@ -213,7 +208,7 @@ public class PostLogin {
                 System.out.println("incorrect join commands.");
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 400:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Bad request.");
@@ -254,7 +249,7 @@ public class PostLogin {
                 }
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 401:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Unauthorized.");

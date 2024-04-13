@@ -50,16 +50,6 @@ public class WSMoveHelper {
         ChessPiece piece = board.getPiece(position);
         Collection<ChessMove> moves = piece.pieceMoves(board, position);
 
-//        for (ChessMove move : moves) {
-//            ChessPosition endPosition = move.getEndPosition();
-//            if (movePositions.containsKey(endPosition.getRow())) {
-//                movePositions.get(endPosition.getRow()).add(endPosition.getColumn());
-//            } else {
-//                movePositions.put(endPosition.getRow(), new ArrayList<>());
-//                movePositions.get(endPosition.getRow()).add(endPosition.getColumn());
-//            }
-//        }
-//        new DrawBoard(color);
         return moves;
     }
 

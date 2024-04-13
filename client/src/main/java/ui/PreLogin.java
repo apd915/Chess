@@ -64,7 +64,7 @@ public class PreLogin {
                 return postLogin.determineState();
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 401:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Unauthorized.");
@@ -94,7 +94,7 @@ public class PreLogin {
                 return postLogin.determineState();
             }
         } catch (ResponseException e) {
-            switch (e.StatusCode()) {
+            switch (e.statusCode()) {
                 case 400:
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("Bad request.");

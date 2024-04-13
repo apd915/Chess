@@ -59,11 +59,6 @@ public class WSClient extends Endpoint {
         Gson gson = new Gson();
         LoadGame loadGame = gson.fromJson(message, LoadGame.class);
         ChessGame chessGame = loadGame.getGame();
-//        int gameID = loadGame.getGame();
-
-        //            GameDAO gameDAO = new SQLGameDAO();
-//            GameData gameData = gameDAO.getGame(gameID);
-//            ChessGame chessGame = gameData.game();
         ChessGame.TeamColor currentTeam = chessGame.getTeamTurn();
         String color;
         if (currentTeam == ChessGame.TeamColor.WHITE) {

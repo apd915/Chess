@@ -156,10 +156,6 @@ public class GameUI implements ServerMessageObserver {
 
                     webSocket.makeMoves(authToken, gameID, move);
 
-                    //
-//                    game.makeMove(move);
-//                    DrawBoard.drawMove(game.getBoard(), playerColor);
-                    //
                 } else {
                     out.print(SET_TEXT_COLOR_RED);
                     System.out.println("invalid move.");
